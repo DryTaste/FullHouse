@@ -285,4 +285,12 @@ public class Speler {
 
         return Update();
     }
+
+    @Override
+    public String toString() {
+        if(this.tussenvoegsel == null || this.tussenvoegsel.isEmpty())
+            return String.format("%s %s", this.voornaam, this.achternaam);
+
+        return String.format("%s %s %s", this.voornaam, this.tussenvoegsel, this.achternaam);
+    }
 }

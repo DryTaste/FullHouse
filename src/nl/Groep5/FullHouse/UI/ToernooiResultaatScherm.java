@@ -227,10 +227,7 @@ class SpelerInschrijving{
 
     @Override
     public String toString() {
-        if(speler.getTussenvoegsel() == null || speler.getTussenvoegsel().isEmpty())
-            return String.format("%s %s", speler.getVoornaam(), speler.getAchternaam());
-
-        return String.format("%s %s %s", speler.getVoornaam(), speler.getTussenvoegsel(), speler.getAchternaam());
+       return speler.toString();
     }
 }
 
