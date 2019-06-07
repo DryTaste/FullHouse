@@ -277,6 +277,14 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, "Fout bij het verwijderen.","Fout", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
+                            case "Inschrijven voor toernooi":
+                                try {
+                                    SpelerToernooiInschrijven.show(geselecteerdeSpeler);
+                                }catch (SQLException ex){
+                                    JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi/speler gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
+                                    ex.printStackTrace();
+                                }
+                                break;
                         }
                     } catch (SQLException uitvoerFout) {
                         uitvoerFout.printStackTrace();
@@ -459,6 +467,9 @@ public class MainScherm {
                                 }else{
                                     JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
+                                break;
+                            case "Overzicht inschrijvingen":
+                                OverzichtInschrijvingenToernooi.show(geselecteerdToernooi);
                                 break;
                         }
                     } catch (SQLException uitvoerFout) {

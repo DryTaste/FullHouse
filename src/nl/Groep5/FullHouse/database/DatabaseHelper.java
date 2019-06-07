@@ -314,6 +314,12 @@ public class DatabaseHelper {
         return true;
     }
 
+    /**
+     * Verkrijg een lijst met uitkomsten van toernooi
+     * @param toernooi
+     * @return Lijst met uitkomsten
+     * @throws SQLException
+     */
     public static List<ToernooiUitkomst> verkrijgToernooiUikomsten(Toernooi toernooi) throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
         PreparedStatement ps = mysql.prepareStatement("select * from toernooi_uitkomsten where toernooiID = ?");
@@ -331,6 +337,12 @@ public class DatabaseHelper {
         return toernooiUitkomsts;
     }
 
+    /**
+     * Verkrijg een lijst met uitkomsten van Speler
+     * @param speler
+     * @return Lijst met uitkomsten
+     * @throws SQLException
+     */
     public static List<ToernooiUitkomst> verkrijgToernooiUikomsten(Speler speler) throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
         PreparedStatement ps = mysql.prepareStatement("select * from toernooi_uitkomsten where spelerID = ?");
@@ -346,6 +358,71 @@ public class DatabaseHelper {
         }
 
         return toernooiUitkomsts;
+    }
+
+    public static List<InschrijvingToernooi> verkrijgLijstMetToernooiInschrijvingen(Toernooi toernooi) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from inschrijving_toernooi where toernooiID = ?");
+        ps.setInt(1, toernooi.getID());
+
+        ResultSet rs = mysql.query(ps);
+
+        List<InschrijvingToernooi> inschrijvingen = new ArrayList<>();
+
+        while (rs.next()) {
+            inschrijvingen.add(new InschrijvingToernooi(rs));
+        }
+
+        return inschrijvingen;
+    }
+
+    public static List<InschrijvingToernooi> verkrijgLijstMetToernooiInschrijvingen(Speler speler) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from inschrijving_toernooi where spelerID = ?");
+        ps.setInt(1, speler.getID());
+
+        ResultSet rs = mysql.query(ps);
+
+        List<InschrijvingToernooi> inschrijvingen = new ArrayList<>();
+
+        while (rs.next()) {
+            inschrijvingen.add(new InschrijvingToernooi(rs));
+        }
+
+        return inschrijvingen;
+    }
+
+
+    public static List<InschrijvingMasterclass> verkrijgLijstMetMasterclassInschrijvingen(MasterClass masterClass) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from inschrijving_masterclass where masterclassID = ?");
+        ps.setInt(1, masterClass.getID());
+
+        ResultSet rs = mysql.query(ps);
+
+        List<InschrijvingMasterclass> inschrijvingen = new ArrayList<>();
+
+        while (rs.next()) {
+            inschrijvingen.add(new InschrijvingMasterclass(rs));
+        }
+
+        return inschrijvingen;
+    }
+
+    public static List<InschrijvingMasterclass> verkrijgLijstMetMasterclassInschrijvingen(Speler speler) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from inschrijving_masterclass where spelerID = ?");
+        ps.setInt(1, speler.getID());
+
+        ResultSet rs = mysql.query(ps);
+
+        List<InschrijvingMasterclass> inschrijvingen = new ArrayList<>();
+
+        while (rs.next()) {
+            inschrijvingen.add(new InschrijvingMasterclass(rs));
+        }
+
+        return inschrijvingen;
     }
 
 //    private static <T> List<T> verkrijgLijstVanObjecten(String table, String idName, int idValue){
