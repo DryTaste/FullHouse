@@ -71,7 +71,7 @@ public class MainScherm {
     private JButton btnToernooiUitvoeren;
     private JComboBox cbToernooiUitvoeren;
     private JButton btnVerwerkWinnaars;
-    private JTextField txtToernooiLocatie;
+    private JComboBox cbToernooiLocaties;
 
 
     public MainScherm() {
@@ -110,7 +110,6 @@ public class MainScherm {
         /*
         SPELER DEEL
          */
-
         spelerTabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try{
@@ -285,23 +284,22 @@ public class MainScherm {
                 }
             }
         });
-        btnZoekenToernooi.addActionListener(new ActionListener() {
+        btnZoekenSpeler.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                toernooiTabel.setModel(bouwToernooiZoekResultaten(txtToernooiZoeken));
+                spelerTabel.setModel(bouwSpelerZoekResultaten(txtZoekSpelerInLijst));
             }
         });
-        btnResetToernooi.addActionListener(new ActionListener() {
+        btnResetSpeler.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                toernooiTabel.setModel(bouwToernooienTabel());
+                spelerTabel.setModel(bouwSpelerTabel());
             }
         });
-
+        
         /*
          TOERNOOI DEEL
         **/
-
         toernooiTabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try{
@@ -453,16 +451,16 @@ public class MainScherm {
                 }
             }
         });
-        btnZoekenSpeler.addActionListener(new ActionListener() {
+        btnZoekenToernooi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                spelerTabel.setModel(bouwSpelerZoekResultaten(txtZoekSpelerInLijst));
+                toernooiTabel.setModel(bouwToernooiZoekResultaten(txtToernooiZoeken));
             }
         });
-        btnResetSpeler.addActionListener(new ActionListener() {
+        btnResetToernooi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                spelerTabel.setModel(bouwSpelerTabel());
+                toernooiTabel.setModel(bouwToernooienTabel());
             }
         });
         btnVerwerkWinnaars.addActionListener(e -> {
