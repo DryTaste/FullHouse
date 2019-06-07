@@ -133,12 +133,17 @@ public class SpelerMasterclassInschrijven extends JDialog {
         }
 
         if(masterClass == null || speler == null){
-            JOptionPane.showMessageDialog(contentPane, "Er is geen speler of masterClass geselecteerd, probeer het opnieuw te selecteren.", "Woeps", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(contentPane, "Er is geen speler of MasterClass geselecteerd, probeer het opnieuw te selecteren.", "Woeps", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (masterClass.isVol()) {
             JOptionPane.showMessageDialog(contentPane, "Dit masterClass zit vol !!", "Vol", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if(speler.getRating() < masterClass.getMinRating()){
+            JOptionPane.showMessageDialog(contentPane, "De rating van de speler is te laag en mag niet meedoen !", "Te lage rating", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
