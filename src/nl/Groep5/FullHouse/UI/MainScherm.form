@@ -681,6 +681,7 @@
                     </constraints>
                     <properties>
                       <model>
+                        <item value="Speler inschrijven"/>
                         <item value="Overzicht inschrijvingen"/>
                       </model>
                     </properties>

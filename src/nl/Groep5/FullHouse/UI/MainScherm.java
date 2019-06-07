@@ -1,6 +1,7 @@
 package nl.Groep5.FullHouse.UI;
 
 import nl.Groep5.FullHouse.UI.Masterclass.OverzichtInschrijvingenMasterclass;
+import nl.Groep5.FullHouse.UI.Masterclass.SpelerMasterclassInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.SpelerToernooiInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
@@ -547,9 +548,11 @@ public class MainScherm {
                         int selectedIndex = (int) masterclassTabel.getValueAt(masterclassTabel.getSelectedRow(), 0);
                         MasterClass geselecteerdeMasterclass = DatabaseHelper.verkrijgMasterClassById(selectedIndex);
                         switch (String.valueOf(cbMasterclassUitvoeren.getItemAt(cbMasterclassUitvoeren.getSelectedIndex()))) {
+                            case "Speler inschrijven":
+                                SpelerMasterclassInschrijven.show(geselecteerdeMasterclass);
+                                break;
                             case "Overzicht inschrijvingen":
                                 OverzichtInschrijvingenMasterclass.show(geselecteerdeMasterclass);
-                                System.out.println("Executed");
                                 break;
                         }
                     } catch (SQLException uitvoerFout) {
