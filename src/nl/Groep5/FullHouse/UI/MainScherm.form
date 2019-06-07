@@ -322,7 +322,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="5bbae" layout-manager="GridLayoutManager" row-count="11" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="5bbae" layout-manager="GridLayoutManager" row-count="10" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -493,24 +493,10 @@
                         <item value="Bewerken"/>
                         <item value="Aanmaken"/>
                         <item value="Speler inschrijven"/>
+                        <item value="Verwerk winnaars"/>
                         <item value="Overzicht inschrijvingen"/>
+                        <item value="Overzicht tafelindeling"/>
                       </model>
-                    </properties>
-                  </component>
-                  <component id="338ef" class="javax.swing.JButton" binding="btnVerwerkWinnaars">
-                    <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="Verwerk winnaars"/>
-                    </properties>
-                  </component>
-                  <component id="cb3ef" class="javax.swing.JButton" binding="btnToernooiTafelIndeling">
-                    <constraints>
-                      <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="&amp;Tafel indeling"/>
                     </properties>
                   </component>
                   <component id="cf875" class="javax.swing.JLabel">
