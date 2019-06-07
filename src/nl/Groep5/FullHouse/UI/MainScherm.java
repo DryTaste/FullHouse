@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Vector;
-import java.util.regex.Pattern;
 
 public class MainScherm {
     private JPanel mainPanel;
@@ -39,14 +38,13 @@ public class MainScherm {
     private JButton btnSpelerUitvoeren;
 
     private JTextField txtToernooiNaam;
-    private JTextField txtToernooiDatum;
-    private JTextField txtToernooiBeginTijd;
-    private JTextField txtToernooiEindTijd;
+    private JFormattedTextField txtToernooiDatum;
+    private JFormattedTextField txtToernooiBeginTijd;
+    private JFormattedTextField txtToernooiEindTijd;
     private JTextArea txtToernooiBeschrijving;
-    private JTextField txtToernooiMaxInschrijvingen;
+    private JFormattedTextField txtToernooiMaxInschrijvingen;
     private JTextField txtToernooiInleggeld;
     private JTextField txtToernooiSluitingInschrijving;
-    private JTextArea txtToernooiCondities;
     private TextFieldWithPlaceholder txtToernooiZoeken;
     private JButton btnToernooiTafelIndeling;
 
@@ -62,12 +60,18 @@ public class MainScherm {
     private JScrollPane spelerScroll;
     private JScrollPane toernooiScroll;
     private JTable toernooiTabel;
-    private JButton btnZoeken;
+    private JButton btnZoekenSpeler;
     private JComboBox spelerCombo;
     private JFormattedTextField txtSpelerRating;
-    private JButton btnReset;
+    private JButton btnResetSpeler;
     private JTextField txtSpelerEmail;
+
+    private JButton btnResetToernooi;
+    private JButton btnZoekenToernooi;
+    private JButton btnToernooiUitvoeren;
+    private JComboBox cbToernooiUitvoeren;
     private JButton btnVerwerkWinnaars;
+
 
     public MainScherm() {
         JFrame frame = new JFrame("FullHouse");
@@ -79,6 +83,9 @@ public class MainScherm {
         try {
             new MaskFormatter("####UU").install(txtSpelerPostcode);
             new MaskFormatter("####-##-##").install(txtSpelerGeboorteDatum);
+            new MaskFormatter("####-##-##").install(txtToernooiDatum);
+            new MaskFormatter("##:##").install(txtToernooiBeginTijd);
+            new MaskFormatter("##:##").install(txtToernooiEindTijd);
         }catch(ParseException fieldFormatError){
             fieldFormatError.printStackTrace();
         }
@@ -99,6 +106,9 @@ public class MainScherm {
             }
         });
 
+        /*
+        SPELER DEEL
+         */
 
         spelerTabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -274,20 +284,22 @@ public class MainScherm {
                 }
             }
         });
-        btnZoeken.addActionListener(new ActionListener() {
+        btnZoekenToernooi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                spelerTabel.setModel(bouwSpelerZoekResultaten(txtZoekSpelerInLijst));
+                toernooiTabel.setModel(bouwToernooiZoekResultaten(txtToernooiZoeken));
             }
         });
-        btnReset.addActionListener(new ActionListener() {
+        btnResetToernooi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                spelerTabel.setModel(bouwSpelerTabel());
+                toernooiTabel.setModel(bouwToernooienTabel());
             }
         });
 
-
+        /*
+         TOERNOOI DEEL
+        **/
 
         toernooiTabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -308,8 +320,164 @@ public class MainScherm {
                 }
             }
         });
-
-
+        btnToernooiUitvoeren.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (toernooiTabel.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(frame, "U moet eerst een selectie maken voordat u een bewerking kunt doen.", "Waarschuwing",JOptionPane.WARNING_MESSAGE);
+                } else {
+                    try {
+                        int selectedIndex = (int) toernooiTabel.getValueAt(toernooiTabel.getSelectedRow(), 0);
+                        Toernooi geselecteerdToernooi = DatabaseHelper.verkrijgToernooiById(selectedIndex);
+                        switch (String.valueOf(cbToernooiUitvoeren.getItemAt(cbToernooiUitvoeren.getSelectedIndex()))) {
+                            case "Bewerken":
+                                boolean validated = true;
+                                try {
+                                    geselecteerdToernooi.setNaam(txtToernooiNaam.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setDatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtToernooiDatum.getText()).getTime()));
+                                }catch(ParseException dateParseError){
+                                    validated = false;
+                                    dateParseError.printStackTrace();
+                                    JOptionPane.showMessageDialog(frame, "De datum is incorrect ingevuld.","Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setBeginTijd(txtToernooiBeginTijd.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setEindTijd(txtToernooiEindTijd.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setBeschrijving(txtToernooiBeschrijving.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setMaxInschrijvingen(Integer.valueOf(txtToernooiMaxInschrijvingen.getText()));
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setUitersteInschrijfDatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtToernooiSluitingInschrijving.getText()).getTime()));
+                                }catch(ParseException dateParseError){
+                                    validated = false;
+                                    dateParseError.printStackTrace();
+                                    JOptionPane.showMessageDialog(frame, "De inschrijf deadline datum is incorrect ingevuld.","Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setInleg(Double.parseDouble(txtToernooiInleggeld.getText()));
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                if(validated && geselecteerdToernooi.Update()) {
+                                    JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                break;
+//                            case "Aanmaken":
+//                                boolean reValidated = true;
+//                                try {
+//                                    geselecteerdeSpeler.setVoornaam(txtSpelerVoornaam.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setTussenvoegsel(txtSpelerTussenvoegsel.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setAchternaam(txtSpelerAchternaam.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setAdres(txtSpelerAdres.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setPostcode(txtSpelerPostcode.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setWoonplaats(txtSpelerWoonplaats.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setTelefoonnummer(txtSpelerTelefoonnummer.getText());
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setGeboortedatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtSpelerGeboorteDatum.getText()).getTime()));
+//                                }catch(ParseException dateParseError){
+//                                    reValidated = false;
+//                                    dateParseError.printStackTrace();
+//                                    JOptionPane.showMessageDialog(frame, "De geboortedatum is incorrect ingevuld.","Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                try {
+//                                    geselecteerdeSpeler.setRating(Double.parseDouble(txtSpelerRating.getText()));
+//                                }catch(Exception error){
+//                                    reValidated = false;
+//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                geselecteerdeSpeler.setGeslacht(((cbSpelerGeslacht.getItemAt(cbSpelerGeslacht.getSelectedIndex()) == "Man")?'M':'V'));
+//                                if(reValidated) {
+//                                    geselecteerdeSpeler.Save();
+//                                    JOptionPane.showMessageDialog(frame, "Gebruiker succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+//                                }
+//                                break;
+//                            case "Verwijderen":
+//                                if(geselecteerdeSpeler.AVGClear()){
+//                                    JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+//                                }else{
+//                                    JOptionPane.showMessageDialog(frame, "Fout bij het verwijderen.","Fout", JOptionPane.ERROR_MESSAGE);
+//                                }
+//                                break;
+                        }
+                    } catch (SQLException uitvoerFout) {
+                        uitvoerFout.printStackTrace();
+                    }
+                    int selectedRow = toernooiTabel.getSelectedRow();
+                    toernooiTabel.setModel(bouwToernooienTabel());
+                    toernooiTabel.setRowSelectionInterval(selectedRow, selectedRow);
+                }
+            }
+        });
+        btnZoekenSpeler.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                spelerTabel.setModel(bouwSpelerZoekResultaten(txtZoekSpelerInLijst));
+            }
+        });
+        btnResetSpeler.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                spelerTabel.setModel(bouwSpelerTabel());
+            }
+        });
         btnVerwerkWinnaars.addActionListener(e -> {
             try {
                 int selectedIndex = (int) toernooiTabel.getValueAt(toernooiTabel.getSelectedRow(), 0);
@@ -325,8 +493,8 @@ public class MainScherm {
                 ex.printStackTrace();
             }
         });
-
     }
+
 
     public static DefaultTableModel bouwSpelerTabel(){
         Vector<String> kollomNamen = new Vector<>();
@@ -393,6 +561,44 @@ public class MainScherm {
         Vector<Vector<Object>> toernooiData = new Vector<>();
         try {
             List<Toernooi> toernooienLijst = DatabaseHelper.verkrijgToernooien();
+            kollomNamen.add("ID");
+            kollomNamen.add("Naam");
+            kollomNamen.add("Datum");
+            kollomNamen.add("Begintijd");
+            kollomNamen.add("Eindtijd");
+            kollomNamen.add("Inschrijvingslimiet");
+            kollomNamen.add("Inleg");
+            kollomNamen.add("Inschrijfdeadline");
+            kollomNamen.add("Locatie");
+            for (Toernooi element : toernooienLijst){
+                Vector<Object> vector = new Vector<>();
+                vector.add(element.getID());
+                vector.add(element.getNaam());
+                vector.add(element.getDatum());
+                vector.add(element.getBeginTijd());
+                vector.add(element.getEindTijd());
+                vector.add(element.getMaxAantalInschrijvingen());
+                vector.add(element.getInleg());
+                vector.add(String.valueOf(element.getUitersteInschrijfDatum()));
+                vector.add(element.getLocatie().getNaam());
+                toernooiData.add(vector);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return new DefaultTableModel(toernooiData, kollomNamen){
+            @Override
+            public boolean isCellEditable(int row, int clumn){
+                return false;
+            }
+        };
+    }
+
+    public static DefaultTableModel bouwToernooiZoekResultaten(TextFieldWithPlaceholder veld){
+        Vector<String> kollomNamen = new Vector<>();
+        Vector<Vector<Object>> toernooiData = new Vector<>();
+        try {
+            List<Toernooi> toernooienLijst = DatabaseHelper.verkrijgToernooien(veld.getText());
             kollomNamen.add("ID");
             kollomNamen.add("Naam");
             kollomNamen.add("Datum");

@@ -39,7 +39,7 @@ public class Toernooi {
         this.eindTijd = resultSet.getString("eindTijd");
         this.maxInschrijvingen = resultSet.getInt("maxInschrijvingen");
         this.inleg = resultSet.getDouble("inleg");
-        //this.uitersteInschrijfDatum = resultSet.get
+        this.uitersteInschrijfDatum = resultSet.getDate("uitersteInschrijfDatum");
         this.locatieID = resultSet.getInt("locatieID");
     }
 
@@ -51,24 +51,37 @@ public class Toernooi {
         return locatieID;
     }
 
-    public void setLocatieID(int locatieID) {
-        this.locatieID = locatieID;
+
+    public void setLocatieID(int locatieID) throws Exception {
+        if(String.valueOf(locatieID).matches("\\d{2}")) {
+            this.locatieID = locatieID;
+        }else{
+            throw new Exception("Locatie ID moet 2 cijfers bevatten.");
+        }
     }
 
     public String getNaam() {
         return naam;
     }
 
-    public void setNaam(String naam) {
-        this.naam = naam;
+    public void setNaam(String naam) throws Exception{
+        if(naam.matches(".{1,45}")) {
+            this.naam = naam;
+        }else{
+            throw new Exception("Naam moet minimaal 1 tot 45 karakters bevatten.");
+        }
     }
 
     public String getBeschrijving() {
         return beschrijving;
     }
 
-    public void setBeschrijving(String beschrijving) {
-        this.beschrijving = beschrijving;
+    public void setBeschrijving(String beschrijving) throws Exception{
+        if(beschrijving.matches(".{1,100}")) {
+            this.beschrijving = beschrijving;
+        }else{
+            throw new Exception("Beschrijving moet minimaal 1 tot 100 karakters bevatten.");
+        }
     }
 
     public Date getDatum() {
@@ -107,16 +120,27 @@ public class Toernooi {
         return maxInschrijvingen;
     }
 
-    public void setMaxInschrijvingen(int maxInschrijvingen) {
-        this.maxInschrijvingen = maxInschrijvingen;
+    public void setMaxInschrijvingen(int maxInschrijvingen) throws Exception{
+        if(String.valueOf(maxInschrijvingen).matches("\\d{1,999999999}")) {
+            this.maxInschrijvingen = maxInschrijvingen;
+        }else{
+            throw new Exception("Het maximaal aantal inschrijvingen moet 1 tot 999999999 zijn.");
+        }
     }
 
     public double getInleg() {
         return inleg;
     }
 
-    public void setInleg(double inleg) {
-        this.inleg = inleg;
+    public void setInleg(double inleg) throws Exception{
+        String regexDecimal = "^-?\\d*\\.\\d+$";
+        String regexInteger = "^-?\\d+$";
+        String regexDouble = regexDecimal + "|" + regexInteger;
+        if(String.valueOf(inleg).matches(regexDouble)) {
+            this.inleg = inleg;
+        }else{
+            throw new Exception("De inleg is incorrect ingevoerd.");
+        }
     }
 
     public List<InschrijvingToernooi> getInschrijvingen() throws SQLException {
@@ -178,9 +202,9 @@ public class Toernooi {
      */
     public boolean Update() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi` SET `naam`=?, `datum`=?, `beginTijd`=?, `eindTijd`=?, `beschrijving`=?, `maxInschrijvingen`=?, `inleg`=?, `uitersteInschrijfDatum`=?, `locatieID`=? WHERE `ID`='?';");
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi` SET `naam`=?, `datum`=?, `beginTijd`=?, `eindTijd`=?, `beschrijving`=?, `maxInschrijvingen`=?, `inleg`=?, `uitersteInschrijfDatum`=?,  WHERE `ID`=?;");
         FillPrepareStatement(ps);
-        ps.setInt(10, this.ID);
+        ps.setInt(9, this.ID);
 
         // check if the update is 1 (1 row updated/added)
         return mysql.update(ps) == 1;
@@ -195,6 +219,7 @@ public class Toernooi {
         ps.setInt(6, this.maxInschrijvingen);
         ps.setDouble(7, this.inleg);
         ps.setDate(8, this.uitersteInschrijfDatum);
-        ps.setInt(9, this.locatieID);
+        //ps.setInt(9, this.locatieID);
+        ps.setInt(9, this.ID);
     }
 }
