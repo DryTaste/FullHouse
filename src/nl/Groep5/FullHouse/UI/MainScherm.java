@@ -468,6 +468,14 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
+                            case "Speler inschrijven":
+                                try {
+                                    SpelerToernooiInschrijven.show(geselecteerdToernooi);
+                                }catch (SQLException ex){
+                                    JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi/speler gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
+                                    ex.printStackTrace();
+                                }
+                                break;
                             case "Overzicht inschrijvingen":
                                 OverzichtInschrijvingenToernooi.show(geselecteerdToernooi);
                                 break;

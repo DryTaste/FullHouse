@@ -492,6 +492,7 @@
                       <model>
                         <item value="Bewerken"/>
                         <item value="Aanmaken"/>
+                        <item value="Speler inschrijven"/>
                         <item value="Overzicht inschrijvingen"/>
                       </model>
                     </properties>
