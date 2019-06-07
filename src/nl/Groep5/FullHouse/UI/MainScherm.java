@@ -87,6 +87,8 @@ public class MainScherm {
     private JButton btnBekendeUitvoeren;
     private JComboBox cbBekende;
     private JTextField txtBekendeSpelerNaam;
+    private JButton btnSpelerUitloggen;
+    private JButton btnToernooiUitloggen;
 
 
     public MainScherm() {
@@ -325,6 +327,13 @@ public class MainScherm {
                 spelerTabel.setModel(bouwSpelerTabel());
             }
         });
+        btnSpelerUitloggen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new InlogScherm();
+            }
+        });
 
         /*
          TOERNOOI DEEL
@@ -532,6 +541,13 @@ public class MainScherm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 toernooiTabel.setModel(bouwToernooienTabel());
+            }
+        });
+        btnToernooiUitloggen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new InlogScherm();
             }
         });
 
