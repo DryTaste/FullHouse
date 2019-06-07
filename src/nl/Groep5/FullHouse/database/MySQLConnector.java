@@ -76,12 +76,13 @@ public class MySQLConnector {
      * Execute a update/insert statement
      * @param statement PrepareStatement with Update/Insert statement
      */
-    public void update(PreparedStatement statement) {
+    public int update(PreparedStatement statement) throws SQLException {
         try {
-            statement.executeUpdate();
+            return statement.executeUpdate();
         } catch (SQLException e) {
             connect();
             e.printStackTrace();
+            throw e; // ook al wordt het hier opgevangen, het dingetje is, we kunnen anders niet zien of het gelukt of gefaald heeft
         } finally {
             try {
                 statement.close();

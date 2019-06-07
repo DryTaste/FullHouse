@@ -1,10 +1,11 @@
 package nl.Groep5.FullHouse.database.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Period;
-import java.util.Date;
+import nl.Groep5.FullHouse.Main;
+import nl.Groep5.FullHouse.database.DatabaseHelper;
+import nl.Groep5.FullHouse.database.MySQLConnector;
+
+import java.sql.*;
+import java.util.List;
 
 /**
  * Created by DeStilleGast 5-6-2019
@@ -96,5 +97,82 @@ public class MasterClass {
 
     public void setMaxAantalInschrijvingen(int maxAantalInschrijvingen) {
         this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+    }
+
+    public List<InschrijvingMasterclass> getInschrijvingen() throws SQLException {
+        return DatabaseHelper.VerkrijgInschrijvingenVanMasterClass(this);
+    }
+
+    public Locatie getLocatie() throws SQLException {
+        return DatabaseHelper.verkrijgLocatieById(locatieId);
+    }
+
+    /**
+     * Probeer speler in te schrijven voor deze MasterClass
+     *
+     * @param speler om te registreren
+     * @return true als registratie gelukt is, false als het niet gelukt is (bijvoorbeeld omdat het vol is)
+     */
+    public boolean voegSpelerToe(Speler speler, Boolean heeftBetaald) throws SQLException {
+        return DatabaseHelper.registreerSpelerVoorMasterclass(this, speler, heeftBetaald);
+    }
+
+    /**
+     * Kijk of de masterclass vol zit kwa inschrijvingen
+     *
+     * @return true als de inschrijven de maximaleAantal overschrijft
+     * <br>
+     * <br>
+     * het returned ook true als er een SQL fout opgetreden is !!
+     */
+    public boolean isVol() {
+        try {
+            return this.getInschrijvingen().size() >= this.getMaxAantalInschrijvingen();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+
+    /**
+     * Nieuwe masterclass opslaan
+     *
+     * @return True als masterclass opgeslagen is
+     * @throws SQLException
+     */
+    public boolean Save() throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `masterclass` (`datum`, `beginTijd`, `eindTijd`, `kosten`, `minRating`, `maxInschrijvingen`, `locatieID`) VALUES (?, ?, ?, ?, ?, ?, ?);");
+        FillPrepareStatement(ps);
+
+        // check if the update is 1 (1 row updated/added)
+        return mysql.update(ps) == 1;
+    }
+
+    /**
+     * Bestaande masterclass updaten
+     *
+     * @return True als masterclass geupdate is
+     * @throws SQLException
+     */
+    public boolean Update() throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `masterclass` SET `datum`=?, `beginTijd`=?, `eindTijd`=?, `kosten`=?, `minRating`=?, `maxInschrijvingen`=?, `locatieID`=? WHERE `ID`=?;");
+        FillPrepareStatement(ps);
+        ps.setInt(8, this.ID);
+
+        // check if the update is 1 (1 row updated/added)
+        return mysql.update(ps) == 1;
+    }
+
+    private void FillPrepareStatement(PreparedStatement ps) throws SQLException {
+        ps.setDate(1, this.datum);
+        ps.setTimestamp(2, this.beginTijd);
+        ps.setTimestamp(3, this.eindTijd);
+        ps.setDouble(4, this.kosten);
+        ps.setDouble(5, this.minRating);
+        ps.setInt(6, this.maxAantalInschrijvingen);
+        ps.setInt(7, this.locatieId);
     }
 }

@@ -1,11 +1,19 @@
 package nl.Groep5.FullHouse.database.impl;
 
+import nl.Groep5.FullHouse.Main;
+import nl.Groep5.FullHouse.database.DatabaseHelper;
+import nl.Groep5.FullHouse.database.MySQLConnector;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Created by DeStilleGast 5-6-2019
@@ -110,41 +118,74 @@ public class Speler {
     }
 
     // https://howtodoinjava.com/java/calculate-age-from-date-of-birth/
-    public int getLeeftijd(){
+    public int getLeeftijd() {
         Period p = Period.between(this.getGeboortedatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), LocalDate.now());
         return p.getYears();
     }
 
-    public void setVoornaam(String voornaam) {
-        this.voornaam = voornaam;
+    public void setVoornaam(String voornaam) throws Exception {
+        if(voornaam.matches(".{1,20}")) {
+            this.voornaam = voornaam;
+        }else{
+            throw new Exception("Voornaam mag niet leeg zijn en mag maximaal 20 karakters bevatten.");
+        }
     }
 
-    public void setTussenvoegsel(String tussenvoegsel) {
-        this.tussenvoegsel = tussenvoegsel;
+    public void setTussenvoegsel(String tussenvoegsel) throws Exception{
+        if(tussenvoegsel.matches("\\D{0,10}")) {
+            this.tussenvoegsel = tussenvoegsel;
+        }else{
+            throw new Exception("Tussenvoegsel mag alleen 0 tot 10 letters bevatten");
+        }
     }
 
-    public void setAchternaam(String achternaam) {
-        this.achternaam = achternaam;
+    public void setAchternaam(String achternaam) throws Exception{
+        if(achternaam.matches("^(?=\\s*\\S).*$")) {
+            this.achternaam = achternaam;
+        }else{
+            throw new Exception("Achternaam mag niet leeg zijn en mag maximaal 45 karakters bevatten.");
+        }
     }
 
-    public void setAdres(String adres) {
-        this.adres = adres;
+    public void setAdres(String adres) throws Exception {
+        if(adres.matches(".{3,30}")) {
+            this.adres = adres;
+        }else{
+            throw new Exception("Adres mag alleen 3 tot 30 karakters bevatten.");
+        }
     }
 
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
+    public void setPostcode(String postcode) throws Exception {
+        if(postcode.matches("\\d{4}[A-Z]{2}")) {
+            this.postcode = postcode;
+        }else{
+            throw new Exception("Postcode moet beginnen met 4 cijfers en eindigen met 2 hoofdletters.");
+        }
     }
 
-    public void setWoonplaats(String woonplaats) {
-        this.woonplaats = woonplaats;
+    public void setWoonplaats(String woonplaats) throws Exception {
+        if(woonplaats.matches(".{1,20}")) {
+            this.woonplaats = woonplaats;
+        }else{
+            throw new Exception("Plaatsnaam moet 1 tot 20 letters bevatten.");
+        }
     }
 
-    public void setTelefoonnummer(String telefoonnummer) {
-        this.telefoonnummer = telefoonnummer;
+    public void setTelefoonnummer(String telefoonnummer) throws Exception {
+        if(telefoonnummer.matches("\\d{1,10}")){
+            this.telefoonnummer = telefoonnummer;
+        }else{
+            throw new Exception("Telefoonnummers mogen 1 tot 10 cijfers bevatten.");
+        }
+
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String email) throws Exception {
+        if(email.matches(".{8,30}")) {
+            this.email = email;
+        }else{
+            throw new Exception("Een valide email adres bestaat uit 8 tot 30 karakters.");
+        }
     }
 
     public void setGeslacht(char geslacht) {
@@ -155,7 +196,101 @@ public class Speler {
         this.geboortedatum = geboortedatum;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
+    public void setRating(double rating) throws Exception{
+        String regexDecimal = "^-?\\d*\\.\\d+$";
+        String regexInteger = "^-?\\d+$";
+        String regexDouble = regexDecimal + "|" + regexInteger;
+        if(String.valueOf(rating).matches(regexDouble)) {
+            this.rating = rating;
+        }else{
+            throw new Exception("De rating is incorrect ingevoerd.");
+        }
+    }
+
+    public boolean registreerVoorToernooi(Toernooi toernooi, Boolean heeftBetaald) throws SQLException {
+        return DatabaseHelper.registreerSpelerVoorToernooi(toernooi, this, heeftBetaald);
+    }
+
+    public boolean registreerVoorMasterClass(MasterClass masterClass, Boolean heeftBetaald) throws SQLException {
+        return DatabaseHelper.registreerSpelerVoorMasterclass(masterClass, this, heeftBetaald);
+    }
+
+    /**
+     * Nieuwe speler opslaan
+     *
+     * @return true als nieuwe speler is opgeslagen
+     * @throws SQLException
+     */
+    public boolean Save() throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `speler` (`voornaam`, `tussenvoegsel`, `achternaam`, `adres`, `postcode`, `woonplaats`, `telefoonnummer`, `email`, `geslacht`, `geboortedatum`, `rating`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        FillPrepareStatement(ps);
+
+        // check if the update is 1 (1 row updated/added)
+        return mysql.update(ps) == 1;
+    }
+
+    /**
+     * Speler bewerken
+     *
+     * @return True als speler bewerkt is
+     * @throws SQLException
+     */
+    public boolean Update() throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `speler` SET `voornaam`=?, `tussenvoegsel`=?, `achternaam`=?, `adres`=?, `postcode`=?, `woonplaats`=?, `telefoonnummer`=?, `email`=?, `geslacht`=?, `geboortedatum`=?, `rating`=? WHERE `ID`=?;");
+        FillPrepareStatement(ps);
+        ps.setInt(12, this.ID);
+
+        // check if the update is 1 (1 row updated/added)
+        return mysql.update(ps) == 1;
+    }
+
+    private void FillPrepareStatement(PreparedStatement ps) throws SQLException {
+        ps.setString(1, this.voornaam);
+        ps.setString(2, this.tussenvoegsel);
+        ps.setString(3, this.achternaam);
+        ps.setString(4, this.adres);
+        ps.setString(5, this.postcode);
+        ps.setString(6, this.woonplaats);
+        ps.setString(7, this.telefoonnummer);
+        ps.setString(8, this.email);
+        ps.setString(9, String.valueOf(this.geslacht)); // convert char back to string
+        ps.setDate(10, this.geboortedatum);
+        ps.setDouble(11, this.rating);
+    }
+
+    /**
+     * Probeer alle persoonsgevoelige informatie te verwijderen uit database
+     *
+     * @return true als het gelukt is
+     * @throws SQLException
+     */
+    public boolean AVGClear() throws SQLException {
+        this.voornaam = "[verwijderd]";
+        this.tussenvoegsel = "";
+        this.achternaam = "[verwijderd]";
+        this.postcode = "0000AA";
+        this.adres = "[verwijderd]";
+        this.email = "[verwijderd]";
+        this.woonplaats = "[verwijderd]";
+        this.telefoonnummer = "0000000000";
+        try {
+            this.geboortedatum = (new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse("0001-01-01").getTime()));
+        }catch (ParseException parseError){
+            parseError.printStackTrace();
+        }
+        this.setGeslacht('?');
+        this.rating = 0;
+
+        return Update();
+    }
+
+    @Override
+    public String toString() {
+        if(this.tussenvoegsel == null || this.tussenvoegsel.isEmpty())
+            return String.format("%s %s", this.voornaam, this.achternaam);
+
+        return String.format("%s %s %s", this.voornaam, this.tussenvoegsel, this.achternaam);
     }
 }
