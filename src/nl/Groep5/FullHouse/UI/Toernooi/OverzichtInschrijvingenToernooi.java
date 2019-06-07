@@ -1,7 +1,5 @@
-package nl.Groep5.FullHouse.UI;
+package nl.Groep5.FullHouse.UI.Toernooi;
 
-import nl.Groep5.FullHouse.Main;
-import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.impl.InschrijvingToernooi;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
@@ -10,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OverzichtInschrijvingenToernooi extends JDialog {
