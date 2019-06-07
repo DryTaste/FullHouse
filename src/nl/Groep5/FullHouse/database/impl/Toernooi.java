@@ -53,7 +53,7 @@ public class Toernooi {
 
 
     public void setLocatieID(int locatieID) throws Exception {
-        if(String.valueOf(locatieID).matches("\\d{2}")) {
+        if(String.valueOf(locatieID).matches("\\d{1,2}")) {
             this.locatieID = locatieID;
         }else{
             throw new Exception("Locatie ID moet 2 cijfers bevatten.");
@@ -202,9 +202,9 @@ public class Toernooi {
      */
     public boolean Update() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi` SET `naam`=?, `datum`=?, `beginTijd`=?, `eindTijd`=?, `beschrijving`=?, `maxInschrijvingen`=?, `inleg`=?, `uitersteInschrijfDatum`=?,  WHERE `ID`=?;");
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi` SET `naam`=?, `datum`=?, `beginTijd`=?, `eindTijd`=?, `beschrijving`=?, `maxInschrijvingen`=?, `inleg`=?, `uitersteInschrijfDatum`=?, `locatieID`=?  WHERE `ID`=?;");
         FillPrepareStatement(ps);
-        ps.setInt(9, this.ID);
+        ps.setInt(10, this.ID);
 
         // check if the update is 1 (1 row updated/added)
         return mysql.update(ps) == 1;
@@ -219,7 +219,6 @@ public class Toernooi {
         ps.setInt(6, this.maxInschrijvingen);
         ps.setDouble(7, this.inleg);
         ps.setDate(8, this.uitersteInschrijfDatum);
-        //ps.setInt(9, this.locatieID);
-        ps.setInt(9, this.ID);
+        ps.setInt(9, this.locatieID);
     }
 }

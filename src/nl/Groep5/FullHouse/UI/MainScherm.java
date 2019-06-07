@@ -2,6 +2,7 @@ package nl.Groep5.FullHouse.UI;
 
 import jdk.nashorn.internal.scripts.JO;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
+import nl.Groep5.FullHouse.database.impl.Locatie;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
 
@@ -71,6 +72,7 @@ public class MainScherm {
     private JButton btnToernooiUitvoeren;
     private JComboBox cbToernooiUitvoeren;
     private JButton btnVerwerkWinnaars;
+    private JComboBox cbToernooiLocaties;
 
 
     public MainScherm() {
@@ -109,7 +111,6 @@ public class MainScherm {
         /*
         SPELER DEEL
          */
-
         spelerTabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try{
@@ -199,9 +200,10 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
                                 geselecteerdeSpeler.setGeslacht(((cbSpelerGeslacht.getItemAt(cbSpelerGeslacht.getSelectedIndex()) == "Man")?'M':'V'));
-                                if(validated) {
-                                    geselecteerdeSpeler.Update();
+                                if(validated && geselecteerdeSpeler.Update()) {
                                     JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
                             case "Registreren":
@@ -262,9 +264,10 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
                                 geselecteerdeSpeler.setGeslacht(((cbSpelerGeslacht.getItemAt(cbSpelerGeslacht.getSelectedIndex()) == "Man")?'M':'V'));
-                                if(reValidated) {
-                                    geselecteerdeSpeler.Save();
+                                if(reValidated && geselecteerdeSpeler.Save()) {
                                     JOptionPane.showMessageDialog(frame, "Gebruiker succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
                             case "Verwijderen":
@@ -284,37 +287,42 @@ public class MainScherm {
                 }
             }
         });
-        btnZoekenToernooi.addActionListener(new ActionListener() {
+        btnZoekenSpeler.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                toernooiTabel.setModel(bouwToernooiZoekResultaten(txtToernooiZoeken));
+                spelerTabel.setModel(bouwSpelerZoekResultaten(txtZoekSpelerInLijst));
             }
         });
-        btnResetToernooi.addActionListener(new ActionListener() {
+        btnResetSpeler.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                toernooiTabel.setModel(bouwToernooienTabel());
+                spelerTabel.setModel(bouwSpelerTabel());
             }
         });
 
         /*
          TOERNOOI DEEL
         **/
-
         toernooiTabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try{
                     int selectedIndex = (int) toernooiTabel.getValueAt(toernooiTabel.getSelectedRow(), 0);
                     Toernooi geselecteerdToernooi = DatabaseHelper.verkrijgToernooiById(selectedIndex);
+                    List<Locatie> locatieLijst = DatabaseHelper.verkrijgLocatieLijst();
+                    Locatie locatie = DatabaseHelper.verkrijgLocatieById(geselecteerdToernooi.getLocatieID());
+
                     txtToernooiNaam.setText(geselecteerdToernooi.getNaam());
                     txtToernooiDatum.setText(String.valueOf(geselecteerdToernooi.getDatum()));
                     txtToernooiBeginTijd.setText(geselecteerdToernooi.getBeginTijd());
                     txtToernooiEindTijd.setText(geselecteerdToernooi.getEindTijd());
                     txtToernooiBeschrijving.setText(geselecteerdToernooi.getBeschrijving());
-                    //txtToernooiCondities.setText(geselecteerdToernooi.getC();
                     txtToernooiMaxInschrijvingen.setText(String.valueOf(geselecteerdToernooi.getMaxAantalInschrijvingen()));
                     txtToernooiInleggeld.setText(String.valueOf(geselecteerdToernooi.getInleg()));
                     txtToernooiSluitingInschrijving.setText(String.valueOf(geselecteerdToernooi.getUitersteInschrijfDatum()));
+                    cbToernooiLocaties.removeAllItems();
+                    for(Locatie element : locatieLijst){
+                        cbToernooiLocaties.addItem(new ComboItem(element.getNaam(),String.valueOf(element.getID())));
+                    }
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
@@ -382,80 +390,76 @@ public class MainScherm {
                                     validated = false;
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
+                                try{
+                                    String value = ((ComboItem)cbToernooiLocaties.getSelectedItem()).getValue();
+                                    geselecteerdToernooi.setLocatieID(Integer.valueOf(value));
+                                }catch (Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE); }
                                 if(validated && geselecteerdToernooi.Update()) {
                                     JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
-//                            case "Aanmaken":
-//                                boolean reValidated = true;
-//                                try {
-//                                    geselecteerdeSpeler.setVoornaam(txtSpelerVoornaam.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setTussenvoegsel(txtSpelerTussenvoegsel.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setAchternaam(txtSpelerAchternaam.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setAdres(txtSpelerAdres.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setPostcode(txtSpelerPostcode.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setWoonplaats(txtSpelerWoonplaats.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setTelefoonnummer(txtSpelerTelefoonnummer.getText());
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setGeboortedatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtSpelerGeboorteDatum.getText()).getTime()));
-//                                }catch(ParseException dateParseError){
-//                                    reValidated = false;
-//                                    dateParseError.printStackTrace();
-//                                    JOptionPane.showMessageDialog(frame, "De geboortedatum is incorrect ingevuld.","Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                try {
-//                                    geselecteerdeSpeler.setRating(Double.parseDouble(txtSpelerRating.getText()));
-//                                }catch(Exception error){
-//                                    reValidated = false;
-//                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                geselecteerdeSpeler.setGeslacht(((cbSpelerGeslacht.getItemAt(cbSpelerGeslacht.getSelectedIndex()) == "Man")?'M':'V'));
-//                                if(reValidated) {
-//                                    geselecteerdeSpeler.Save();
-//                                    JOptionPane.showMessageDialog(frame, "Gebruiker succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
-//                                }
-//                                break;
-//                            case "Verwijderen":
-//                                if(geselecteerdeSpeler.AVGClear()){
-//                                    JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
-//                                }else{
-//                                    JOptionPane.showMessageDialog(frame, "Fout bij het verwijderen.","Fout", JOptionPane.ERROR_MESSAGE);
-//                                }
-//                                break;
+                            case "Aanmaken":
+                                boolean Revalidated = true;
+                                try {
+                                    geselecteerdToernooi.setNaam(txtToernooiNaam.getText());
+                                }catch(Exception error){
+                                    Revalidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setDatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtToernooiDatum.getText()).getTime()));
+                                }catch(ParseException dateParseError){
+                                    Revalidated = false;
+                                    dateParseError.printStackTrace();
+                                    JOptionPane.showMessageDialog(frame, "De datum is incorrect ingevuld.","Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setBeginTijd(txtToernooiBeginTijd.getText());
+                                }catch(Exception error){
+                                    Revalidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setEindTijd(txtToernooiEindTijd.getText());
+                                }catch(Exception error){
+                                    Revalidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setBeschrijving(txtToernooiBeschrijving.getText());
+                                }catch(Exception error){
+                                    Revalidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setMaxInschrijvingen(Integer.valueOf(txtToernooiMaxInschrijvingen.getText()));
+                                }catch(Exception error){
+                                    Revalidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setUitersteInschrijfDatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtToernooiSluitingInschrijving.getText()).getTime()));
+                                }catch(ParseException dateParseError){
+                                    Revalidated = false;
+                                    dateParseError.printStackTrace();
+                                    JOptionPane.showMessageDialog(frame, "De inschrijf deadline datum is incorrect ingevuld.","Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdToernooi.setInleg(Double.parseDouble(txtToernooiInleggeld.getText()));
+                                }catch(Exception error){
+                                    Revalidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                if(Revalidated && geselecteerdToernooi.Save()) {
+                                    JOptionPane.showMessageDialog(frame, "Nieuw toernooi succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
+                                }
+                                break;
                         }
                     } catch (SQLException uitvoerFout) {
                         uitvoerFout.printStackTrace();
@@ -466,16 +470,16 @@ public class MainScherm {
                 }
             }
         });
-        btnZoekenSpeler.addActionListener(new ActionListener() {
+        btnZoekenToernooi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                spelerTabel.setModel(bouwSpelerZoekResultaten(txtZoekSpelerInLijst));
+                toernooiTabel.setModel(bouwToernooiZoekResultaten(txtToernooiZoeken));
             }
         });
-        btnResetSpeler.addActionListener(new ActionListener() {
+        btnResetToernooi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                spelerTabel.setModel(bouwSpelerTabel());
+                toernooiTabel.setModel(bouwToernooienTabel());
             }
         });
         btnVerwerkWinnaars.addActionListener(e -> {
