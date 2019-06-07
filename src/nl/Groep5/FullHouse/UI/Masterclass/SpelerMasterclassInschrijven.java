@@ -185,9 +185,4 @@ public class SpelerMasterclassInschrijven extends JDialog {
         dialog.setMinimumSize(new Dimension(500, 500));
         dialog.setVisible(true);
     }
-
-    public static void main(String[] args) throws SQLException {
-        Main.createDbConnection();
-        show(DatabaseHelper.verkrijgMasterClassById(12341234));
-    }
 }
