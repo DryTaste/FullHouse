@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -48,7 +49,6 @@ public class MainScherm {
     private JTextField txtToernooiInleggeld;
     private JTextField txtToernooiSluitingInschrijving;
     private TextFieldWithPlaceholder txtToernooiZoeken;
-    private JButton btnToernooiTafelIndeling;
 
     private JList listMasterClass;
     private JTextField txtMasterClassDatum;
@@ -329,9 +329,12 @@ public class MainScherm {
                     txtToernooiInleggeld.setText(String.valueOf(geselecteerdToernooi.getInleg()));
                     txtToernooiSluitingInschrijving.setText(String.valueOf(geselecteerdToernooi.getUitersteInschrijfDatum()));
                     cbToernooiLocaties.removeAllItems();
+                    ArrayList<Integer> idIndex = new ArrayList<>();
                     for(Locatie element : locatieLijst){
                         cbToernooiLocaties.addItem(new ComboItem(element.getNaam(),String.valueOf(element.getID())));
+                        idIndex.add(element.getID());
                     }
+                    cbToernooiLocaties.setSelectedIndex(idIndex.indexOf(geselecteerdToernooi.getLocatieID()));
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
@@ -480,6 +483,18 @@ public class MainScherm {
                             case "Overzicht inschrijvingen":
                                 OverzichtInschrijvingenToernooi.show(geselecteerdToernooi);
                                 break;
+                            case "Verwerk winnaars":
+                                try {
+                                    if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
+                                        ToernooiResultaatScherm.show(geselecteerdToernooi);
+                                    }else {
+                                        JOptionPane.showMessageDialog(mainPanel, "Er zijn al resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
+                                    }
+                                } catch (SQLException | NullPointerException ex) {
+                                    JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
+                                    ex.printStackTrace();
+                                }
+                                break;
                         }
                     } catch (SQLException uitvoerFout) {
                         uitvoerFout.printStackTrace();
@@ -500,21 +515,6 @@ public class MainScherm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 toernooiTabel.setModel(bouwToernooienTabel());
-            }
-        });
-        btnVerwerkWinnaars.addActionListener(e -> {
-            try {
-                int selectedIndex = (int) toernooiTabel.getValueAt(toernooiTabel.getSelectedRow(), 0);
-                Toernooi geselecteerdToernooi = DatabaseHelper.verkrijgToernooiById(selectedIndex);
-
-                if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
-                    ToernooiResultaatScherm.show(geselecteerdToernooi);
-                }else {
-                    JOptionPane.showMessageDialog(mainPanel, "Er zijn al resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
-                }
-            } catch (SQLException | NullPointerException ex) {
-                JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
             }
         });
     }
