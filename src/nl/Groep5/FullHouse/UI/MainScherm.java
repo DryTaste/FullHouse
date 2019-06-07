@@ -4,10 +4,7 @@ import nl.Groep5.FullHouse.UI.Masterclass.OverzichtInschrijvingenMasterclass;
 import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
-import nl.Groep5.FullHouse.database.impl.Locatie;
-import nl.Groep5.FullHouse.database.impl.MasterClass;
-import nl.Groep5.FullHouse.database.impl.Speler;
-import nl.Groep5.FullHouse.database.impl.Toernooi;
+import nl.Groep5.FullHouse.database.impl.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -87,6 +84,7 @@ public class MainScherm {
     private JButton btnBekendeReset;
     private JButton btnBekendeUitvoeren;
     private JComboBox cbBekende;
+    private JTextField txtBekendeSpelerNaam;
 
 
     public MainScherm() {
@@ -120,6 +118,8 @@ public class MainScherm {
                     case 2:
                         masterclassTabel.setModel(bouwMasterclassTabel());
                         break;
+                    case 3:
+                        bekendeTabel.setModel(bouwBekendeSpelerTabel());
                 }
             }
         });
@@ -560,6 +560,22 @@ public class MainScherm {
                 }
             }
         });
+
+        /*
+        *BEKENDE SPELER DEEL
+         */
+        bekendeTabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                try{
+                    int selectedIndex = (int) bekendeTabel.getValueAt(bekendeTabel.getSelectedRow(), 0);
+                    BekendeSpeler geselecteerdeBekendeSpeler = DatabaseHelper.verkrijgBekendeSpelerBijId(selectedIndex);
+                    txtBekendeSpelerNaam.setText(geselecteerdeBekendeSpeler.getPseudonaam());
+                }catch(SQLException q){
+                    q.printStackTrace();
+                }
+            }
+        });
+
     }
 
 
@@ -726,6 +742,30 @@ public class MainScherm {
             e.printStackTrace();
         }
         return new DefaultTableModel(masterclassData, kollomNamen){
+            @Override
+            public boolean isCellEditable(int row, int clumn){
+                return false;
+            }
+        };
+    }
+
+    public static DefaultTableModel bouwBekendeSpelerTabel(){
+        Vector<String> kollomNamen = new Vector<>();
+        Vector<Vector<Object>> bekendeSpelerData = new Vector<>();
+        try {
+            List<BekendeSpeler> masterclassLijst = DatabaseHelper.verkrijgBekendeSpelers();
+            kollomNamen.add("ID");
+            kollomNamen.add("Naam");
+            for (BekendeSpeler element : masterclassLijst){
+                Vector<Object> vector = new Vector<>();
+                vector.add(element.getId());
+                vector.add(element.getPseudonaam());
+                bekendeSpelerData.add(vector);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return new DefaultTableModel(bekendeSpelerData, kollomNamen){
             @Override
             public boolean isCellEditable(int row, int clumn){
                 return false;
