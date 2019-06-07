@@ -199,9 +199,10 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
                                 geselecteerdeSpeler.setGeslacht(((cbSpelerGeslacht.getItemAt(cbSpelerGeslacht.getSelectedIndex()) == "Man")?'M':'V'));
-                                if(validated) {
-                                    geselecteerdeSpeler.Update();
+                                if(validated && geselecteerdeSpeler.Update()) {
                                     JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
                             case "Registreren":
@@ -262,9 +263,10 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
                                 geselecteerdeSpeler.setGeslacht(((cbSpelerGeslacht.getItemAt(cbSpelerGeslacht.getSelectedIndex()) == "Man")?'M':'V'));
-                                if(reValidated) {
-                                    geselecteerdeSpeler.Save();
+                                if(reValidated && geselecteerdeSpeler.Save()) {
                                     JOptionPane.showMessageDialog(frame, "Gebruiker succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
                             case "Verwijderen":
@@ -296,7 +298,7 @@ public class MainScherm {
                 spelerTabel.setModel(bouwSpelerTabel());
             }
         });
-        
+
         /*
          TOERNOOI DEEL
         **/
@@ -383,6 +385,8 @@ public class MainScherm {
                                 }
                                 if(validated && geselecteerdToernooi.Update()) {
                                     JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
                             case "Aanmaken":
@@ -439,6 +443,8 @@ public class MainScherm {
                                 }
                                 if(Revalidated && geselecteerdToernooi.Save()) {
                                     JOptionPane.showMessageDialog(frame, "Nieuw toernooi succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
                         }
