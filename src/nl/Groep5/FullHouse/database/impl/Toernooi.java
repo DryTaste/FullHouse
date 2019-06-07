@@ -53,7 +53,7 @@ public class Toernooi {
 
 
     public void setLocatieID(int locatieID) throws Exception {
-        if(String.valueOf(locatieID).matches("\\d{2}")) {
+        if(String.valueOf(locatieID).matches("\\d{1,2}")) {
             this.locatieID = locatieID;
         }else{
             throw new Exception("Locatie ID moet 2 cijfers bevatten.");

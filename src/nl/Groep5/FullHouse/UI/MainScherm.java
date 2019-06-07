@@ -2,6 +2,7 @@ package nl.Groep5.FullHouse.UI;
 
 import jdk.nashorn.internal.scripts.JO;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
+import nl.Groep5.FullHouse.database.impl.Locatie;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
 
@@ -307,15 +308,21 @@ public class MainScherm {
                 try{
                     int selectedIndex = (int) toernooiTabel.getValueAt(toernooiTabel.getSelectedRow(), 0);
                     Toernooi geselecteerdToernooi = DatabaseHelper.verkrijgToernooiById(selectedIndex);
+                    List<Locatie> locatieLijst = DatabaseHelper.verkrijgLocatieLijst();
+                    Locatie locatie = DatabaseHelper.verkrijgLocatieById(geselecteerdToernooi.getLocatieID());
+
                     txtToernooiNaam.setText(geselecteerdToernooi.getNaam());
                     txtToernooiDatum.setText(String.valueOf(geselecteerdToernooi.getDatum()));
                     txtToernooiBeginTijd.setText(geselecteerdToernooi.getBeginTijd());
                     txtToernooiEindTijd.setText(geselecteerdToernooi.getEindTijd());
                     txtToernooiBeschrijving.setText(geselecteerdToernooi.getBeschrijving());
-                    //txtToernooiCondities.setText(geselecteerdToernooi.getC();
                     txtToernooiMaxInschrijvingen.setText(String.valueOf(geselecteerdToernooi.getMaxAantalInschrijvingen()));
                     txtToernooiInleggeld.setText(String.valueOf(geselecteerdToernooi.getInleg()));
                     txtToernooiSluitingInschrijving.setText(String.valueOf(geselecteerdToernooi.getUitersteInschrijfDatum()));
+                    cbToernooiLocaties.removeAllItems();
+                    for(Locatie element : locatieLijst){
+                        cbToernooiLocaties.addItem(new ComboItem(element.getNaam(),String.valueOf(element.getID())));
+                    }
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
@@ -383,6 +390,12 @@ public class MainScherm {
                                     validated = false;
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
+                                try{
+                                    String value = ((ComboItem)cbToernooiLocaties.getSelectedItem()).getValue();
+                                    geselecteerdToernooi.setLocatieID(Integer.valueOf(value));
+                                }catch (Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE); }
                                 if(validated && geselecteerdToernooi.Update()) {
                                     JOptionPane.showMessageDialog(frame, "Bewerking succesvol uitgevoerd.","Bericht", JOptionPane.INFORMATION_MESSAGE);
                                 }else{
