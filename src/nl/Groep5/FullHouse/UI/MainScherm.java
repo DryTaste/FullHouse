@@ -1,5 +1,6 @@
 package nl.Groep5.FullHouse.UI;
 
+import nl.Groep5.FullHouse.UI.Masterclass.OverzichtInschrijvingenMasterclass;
 import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
@@ -535,7 +536,30 @@ public class MainScherm {
         /*
         *MASTERCLASS DEEL
          */
-
+        btnMasterclassUitvoeren.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (masterclassTabel.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(frame, "U moet eerst een selectie maken voordat u een bewerking kunt doen.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    try {
+                        int selectedIndex = (int) masterclassTabel.getValueAt(masterclassTabel.getSelectedRow(), 0);
+                        MasterClass geselecteerdeMasterclass = DatabaseHelper.verkrijgMasterClassById(selectedIndex);
+                        switch (String.valueOf(cbMasterclassUitvoeren.getItemAt(cbMasterclassUitvoeren.getSelectedIndex()))) {
+                            case "Overzicht inschrijvingen":
+                                OverzichtInschrijvingenMasterclass.show(geselecteerdeMasterclass);
+                                System.out.println("Executed");
+                                break;
+                        }
+                    } catch (SQLException uitvoerFout) {
+                        uitvoerFout.printStackTrace();
+                    }
+                    int selectedRow = masterclassTabel.getSelectedRow();
+                    masterclassTabel.setModel(bouwMasterclassTabel());
+                    masterclassTabel.setRowSelectionInterval(selectedRow, selectedRow);
+                }
+            }
+        });
     }
 
 
