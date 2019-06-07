@@ -175,4 +175,9 @@ public class MasterClass {
         ps.setInt(6, this.maxAantalInschrijvingen);
         ps.setInt(7, this.locatieId);
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%s] %s %s", this.ID, this.datum.toString(), this.beginTijd.toString());
+    }
 }
