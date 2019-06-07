@@ -491,7 +491,6 @@
                       <model>
                         <item value="Bewerken"/>
                         <item value="Aanmaken"/>
-                        <item value="Speler inschrijven"/>
                       </model>
                     </properties>
                   </component>
