@@ -4,6 +4,7 @@ import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.impl.Locatie;
+import nl.Groep5.FullHouse.database.impl.MasterClass;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
 
@@ -50,13 +51,12 @@ public class MainScherm {
     private JTextField txtToernooiSluitingInschrijving;
     private TextFieldWithPlaceholder txtToernooiZoeken;
 
-    private JList listMasterClass;
     private JTextField txtMasterClassDatum;
     private JTextField txtMasterClassBeginTijd;
     private JTextField txtMasterClassEindDatum;
     private JTextField txtMasterClassKosten;
     private JTextField txtMasterClassMinRating;
-    private JButton btnMasterClassGeregistreerdeSpelers;
+    private JButton btnMasterclassUitvoeren;
     private TextFieldWithPlaceholder txtMasterClassZoeken;
     private JTable spelerTabel;
     private JScrollPane spelerScroll;
@@ -74,6 +74,18 @@ public class MainScherm {
     private JComboBox cbToernooiUitvoeren;
     private JButton btnVerwerkWinnaars;
     private JComboBox cbToernooiLocaties;
+    private JScrollPane masterclassScroll;
+    private JTable masterclassTabel;
+    private JButton btnMasterclassReset;
+    private JButton btnMasterclassZoeken;
+    private JComboBox cbMasterclassUitvoeren;
+    private JScrollPane bekendeScroll;
+    private JTable bekendeTabel;
+    private TextFieldWithPlaceholder txtBekendeZoeken;
+    private JButton btnBekendeZoeken;
+    private JButton btnBekendeReset;
+    private JButton btnBekendeUitvoeren;
+    private JComboBox cbBekende;
 
 
     public MainScherm() {
@@ -103,7 +115,9 @@ public class MainScherm {
                         break;
                     case 1:
                         toernooiTabel.setModel(bouwToernooienTabel());
-                    default:
+                        break;
+                    case 2:
+                        masterclassTabel.setModel(bouwMasterclassTabel());
                         break;
                 }
             }
@@ -517,6 +531,11 @@ public class MainScherm {
                 toernooiTabel.setModel(bouwToernooienTabel());
             }
         });
+
+        /*
+        *MASTERCLASS DEEL
+         */
+
     }
 
 
@@ -649,6 +668,40 @@ public class MainScherm {
             e.printStackTrace();
         }
         return new DefaultTableModel(toernooiData, kollomNamen){
+            @Override
+            public boolean isCellEditable(int row, int clumn){
+                return false;
+            }
+        };
+    }
+
+    public static DefaultTableModel bouwMasterclassTabel(){
+        Vector<String> kollomNamen = new Vector<>();
+        Vector<Vector<Object>> masterclassData = new Vector<>();
+        try {
+            List<MasterClass> masterclassLijst = DatabaseHelper.verkrijgMasterClasses();
+            kollomNamen.add("ID");
+            kollomNamen.add("Datum");
+            kollomNamen.add("beginTijd");
+            kollomNamen.add("eindTijd");
+            kollomNamen.add("kosten");
+            kollomNamen.add("minRating");
+            kollomNamen.add("maxInschrijvingen");
+            for (MasterClass element : masterclassLijst){
+                Vector<Object> vector = new Vector<>();
+                vector.add(element.getID());
+                vector.add(element.getDatum());
+                vector.add(element.getBeginTijd());
+                vector.add(element.getEindTijd());
+                vector.add(element.getKosten());
+                vector.add(element.getMinRating());
+                vector.add(element.getMaxAantalInschrijvingen());
+                masterclassData.add(vector);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return new DefaultTableModel(masterclassData, kollomNamen){
             @Override
             public boolean isCellEditable(int row, int clumn){
                 return false;
