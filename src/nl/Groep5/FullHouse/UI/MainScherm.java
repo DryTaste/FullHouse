@@ -1,6 +1,7 @@
 package nl.Groep5.FullHouse.UI;
 
-import jdk.nashorn.internal.scripts.JO;
+import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
+import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.impl.Locatie;
 import nl.Groep5.FullHouse.database.impl.Speler;
