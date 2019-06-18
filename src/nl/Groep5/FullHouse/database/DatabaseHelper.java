@@ -133,7 +133,7 @@ public class DatabaseHelper {
         if (filter == null || filter.isEmpty()) {
             ps = mysql.prepareStatement("select * from masterclass");
         }else{
-            ps = mysql.prepareStatement("select * from masterclass where datum like ? or beginTijd like ? or eindTijd like ? or kosten like ? or minRating like ? or maxInschrijvingen like ? or locatieID = ? or ID = ?");
+            ps = mysql.prepareStatement("select * from masterclass where datum like ? or beginTijd like ? or eindTijd like ? or kosten like ? or minRating like ? or maxInschrijvingen like ? or locatieID = ? or leraar like ? or ID = ?");
             ps.setString(1, filter);
             ps.setString(2, filter);
             ps.setString(3, filter);
@@ -142,6 +142,7 @@ public class DatabaseHelper {
             ps.setString(6, filter);
             ps.setString(7, filter);
             ps.setString(8, filter);
+            ps.setString(9, filter);
         }
         ResultSet rs = mysql.query(ps);
 

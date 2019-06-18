@@ -16,9 +16,9 @@ public class MasterClass {
     private Date datum;
     private String beginTijd, eindTijd;
     private double kosten, minRating;
-    private int maxAantalInschrijvingen;
+    private int maxAantalInschrijvingen, leraar;
 
-    public MasterClass(int locatieId, Date datum, String beginTijd, String eindTijd, double kosten, double minRating, int maxAantalInschrijvingen) {
+    public MasterClass(int locatieId, Date datum, String beginTijd, String eindTijd, double kosten, double minRating, int maxAantalInschrijvingen, int leraar) {
         this.locatieId = locatieId;
         this.datum = datum;
         this.beginTijd = beginTijd;
@@ -26,6 +26,7 @@ public class MasterClass {
         this.kosten = kosten;
         this.minRating = minRating;
         this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+        this.leraar = leraar;
     }
 
     public MasterClass(ResultSet resultSet) throws SQLException {
@@ -37,6 +38,7 @@ public class MasterClass {
         this.minRating = resultSet.getDouble("minRating");
         this.maxAantalInschrijvingen = resultSet.getInt("maxInschrijvingen");
         this.locatieId = resultSet.getInt("locatieID");
+        this.leraar = resultSet.getInt("leraar");
     }
 
     public int getID() {
@@ -45,6 +47,18 @@ public class MasterClass {
 
     public int getLocatieId() {
         return locatieId;
+    }
+
+    public int getLeraar(){
+        return leraar;
+    }
+
+    public void setLeraar(int leraar) throws Exception{
+        if(String.valueOf(leraar).matches("\\d{1,4}")){
+            this.leraar = leraar;
+        }else{
+            throw new Exception("Leraar moet tussen 1 en 4 cijfers bevatten.");
+        }
     }
 
     public void setLocatieId(int locatieId) throws Exception{
@@ -69,6 +83,7 @@ public class MasterClass {
     }
 
     public void setBeginTijd(String beginTijd){
+        this.beginTijd = beginTijd;
     }
 
     public String getEindTijd() {
@@ -165,7 +180,7 @@ public class MasterClass {
      */
     public boolean Save() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `masterclass` (`datum`, `beginTijd`, `eindTijd`, `kosten`, `minRating`, `maxInschrijvingen`, `locatieID`) VALUES (?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `masterclass` (`datum`, `beginTijd`, `eindTijd`, `kosten`, `minRating`, `maxInschrijvingen`, `locatieID`, leraar) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         FillPrepareStatement(ps);
 
         // check if the update is 1 (1 row updated/added)
@@ -180,9 +195,9 @@ public class MasterClass {
      */
     public boolean Update() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("UPDATE `masterclass` SET `datum`=?, `beginTijd`=?, `eindTijd`=?, `kosten`=?, `minRating`=?, `maxInschrijvingen`=?, `locatieID`=? WHERE `ID`=?;");
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `masterclass` SET `datum`=?, `beginTijd`=?, `eindTijd`=?, `kosten`=?, `minRating`=?, `maxInschrijvingen`=?, `locatieID`=?, `leraar`=? WHERE `ID`=?;");
         FillPrepareStatement(ps);
-        ps.setInt(8, this.ID);
+        ps.setInt(9, this.ID);
 
         // check if the update is 1 (1 row updated/added)
         return mysql.update(ps) == 1;
@@ -196,6 +211,7 @@ public class MasterClass {
         ps.setDouble(5, this.minRating);
         ps.setInt(6, this.maxAantalInschrijvingen);
         ps.setInt(7, this.locatieId);
+        ps.setInt(8, this.leraar);
     }
 
     @Override
