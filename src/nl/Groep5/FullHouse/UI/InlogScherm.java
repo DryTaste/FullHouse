@@ -33,8 +33,8 @@ public class InlogScherm implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PreparedStatement ps = Main.getMySQLConnection().prepareStatement("select gebruikersnaam, wachtwoord, rechten from medewerker where gebruikersnaam = ? and wachtwoord = ?");
         try {
+            PreparedStatement ps = Main.getMySQLConnection().prepareStatement("select gebruikersnaam, wachtwoord, rechten from medewerker where gebruikersnaam = ? and wachtwoord = ?");
             ps.setString(1, txtUser.getText());
             ps.setString(2, new String(txtPassword.getPassword()));
 

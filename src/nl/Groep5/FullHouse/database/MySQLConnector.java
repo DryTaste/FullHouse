@@ -62,14 +62,8 @@ public class MySQLConnector {
      * @param qry Query
      * @return PreparedStatedment with given query
      */
-    public PreparedStatement prepareStatement(String qry) {
-        PreparedStatement st = null;
-        try {
-            st = con.prepareStatement(qry);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return st;
+    public PreparedStatement prepareStatement(String qry) throws SQLException {
+        return con.prepareStatement(qry);
     }
 
     /**
@@ -84,11 +78,7 @@ public class MySQLConnector {
             e.printStackTrace();
             throw e; // ook al wordt het hier opgevangen, het dingetje is, we kunnen anders niet zien of het gelukt of gefaald heeft
         } finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            statement.close();
         }
     }
 
@@ -105,13 +95,7 @@ public class MySQLConnector {
      * @param statement PrepareStatement with SELECT query
      * @return ResultSet from given PrepareStatement/query
      */
-    public ResultSet query(PreparedStatement statement) {
-        try {
-            return statement.executeQuery();
-        } catch (SQLException e) {
-            connect();
-            e.printStackTrace();
-        }
-        return null;
+    public ResultSet query(PreparedStatement statement) throws SQLException {
+        return statement.executeQuery();
     }
 }

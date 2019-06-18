@@ -1,24 +1,26 @@
 package nl.Groep5.FullHouse.UI.Toernooi;
 
-import nl.Groep5.FullHouse.Main;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.impl.InschrijvingToernooi;
-import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
+import nl.Groep5.FullHouse.database.impl.ToernooiTafelIndeling;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ToernooiTafelIndelingScherm extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JList lTafelIndeling;
+    private JButton btnOpnieuw;
+
+    private List<ToernooiTafelIndeling> indelingList = new ArrayList<>();
+    private DefaultListModel<String> listModel = new DefaultListModel<>();
+    private boolean hasIndeling = false;
 
     public ToernooiTafelIndelingScherm(Toernooi toernooi) {
         setContentPane(contentPane);
@@ -28,29 +30,74 @@ public class ToernooiTafelIndelingScherm extends JDialog {
         pack();
 
         buttonOK.addActionListener(e -> onOK());
+        btnOpnieuw.addActionListener(e -> fillList());
 
-        DefaultListModel<String> listModel = new DefaultListModel<>();
         lTafelIndeling.setModel(listModel);
 
         try {
-            List<InschrijvingToernooi> inschrijvingen = toernooi.getInschrijvingen();
-            Collections.shuffle(inschrijvingen);
-            for (int i = 0; i < inschrijvingen.size(); i++) {
-                Speler s = inschrijvingen.get(i).getSpeler();
+            indelingList = DatabaseHelper.verkrijgTafelIndelingVanToernooi(toernooi);
 
-                listModel.addElement(String.format("Stoel %s: [%s]", i, s.toString()));
+            if (indelingList == null || indelingList.isEmpty()) {
+                for (InschrijvingToernooi inschrijving : toernooi.getInschrijvingen()) {
+                    indelingList.add(new ToernooiTafelIndeling(inschrijving.getToernooiID(), inschrijving.getSpelerID(), 0));
+                }
+            } else {
+                hasIndeling = true;
+                btnOpnieuw.setEnabled(false);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Er is een fout opgetreden met het laden van de inschrijvingen", "Error", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
         }
+
+        fillList();
+    }
+
+    private void fillList() {
+        listModel.clear();
+
+        if (!hasIndeling)
+            Collections.shuffle(indelingList);
+
+        for (int i = 0; i < indelingList.size(); i++) {
+            ToernooiTafelIndeling s = indelingList.get(i);
+            s.setStoelNr(i);
+
+            try {
+                listModel.addElement(String.format("Stoel %s: [%s]", i, s.getSpeler().toString()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private void onOK() {
-        // add your code here
+        if (!hasIndeling) {
+            boolean goedOpgeslagen = true;
+            for (ToernooiTafelIndeling toernooiTafelIndeling : indelingList) {
+                try {
+                    boolean isOpgeslagen = toernooiTafelIndeling.UpdateAnderSave();
+
+                    if (!isOpgeslagen) goedOpgeslagen = false;
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!goedOpgeslagen) {
+                JOptionPane.showMessageDialog(this, "Er is wat fout gegaan tijdens het opslaan van de tafelindeling !", "", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
         dispose();
     }
 
-    public static void show(Toernooi toernooi) throws SQLException {
+    public static void show(Toernooi toernooi) {
         ToernooiTafelIndelingScherm dialog = new ToernooiTafelIndelingScherm(toernooi);
         dialog.setMinimumSize(new Dimension(400, 300));
         dialog.setVisible(true);

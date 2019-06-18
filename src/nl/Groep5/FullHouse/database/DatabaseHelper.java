@@ -58,7 +58,7 @@ public class DatabaseHelper {
         MySQLConnector mysql = Main.getMySQLConnection();
         PreparedStatement ps;
 
-            ps = mysql.prepareStatement("select * from bekende_speler");
+        ps = mysql.prepareStatement("select * from bekende_speler");
 
         ResultSet rs = mysql.query(ps);
 
@@ -234,15 +234,15 @@ public class DatabaseHelper {
     public static List<Toernooi> verkrijgToernooien(String filter) throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
         PreparedStatement ps;
-        if(filter == null || filter.isEmpty()){
+        if (filter == null || filter.isEmpty()) {
             ps = mysql.prepareStatement("select * from toernooi");
         } else {
             ps = mysql.prepareStatement("select * from toernooi where naam like ? or datum like ? or beginTijd like ? or eindTijd like ? or ID = ?");
-            ps.setString(1,filter);
-            ps.setString(2,filter);
-            ps.setString(3,filter);
-            ps.setString(4,filter);
-            ps.setString(5,filter);
+            ps.setString(1, filter);
+            ps.setString(2, filter);
+            ps.setString(3, filter);
+            ps.setString(4, filter);
+            ps.setString(5, filter);
         }
         ResultSet rs = mysql.query(ps);
 
@@ -344,6 +344,7 @@ public class DatabaseHelper {
 
     /**
      * Verkrijg een lijst met uitkomsten van toernooi
+     *
      * @param toernooi
      * @return Lijst met uitkomsten
      * @throws SQLException
@@ -367,6 +368,7 @@ public class DatabaseHelper {
 
     /**
      * Verkrijg een lijst met uitkomsten van Speler
+     *
      * @param speler
      * @return Lijst met uitkomsten
      * @throws SQLException
@@ -453,21 +455,18 @@ public class DatabaseHelper {
         return inschrijvingen;
     }
 
-//    private static <T> List<T> verkrijgLijstVanObjecten(String table, String idName, int idValue){
-//        MySQLConnector mysql = Main.getMySQLConnection();
-//        PreparedStatement ps = mysql.prepareStatement("select * from ? where ? = ?");
-//        ps.setString(1, table);
-//        ps.setString(2, idName);
-//        ps.setInt(3, idValue);
-//
-//        ResultSet rs = mysql.query(ps);
-//
-//        List<T> inschrijvingen = new ArrayList<>();
-//
-//        while (rs.next()) {
-//            inschrijvingen.add(new T(rs));
-//        }
-//
-//        return inschrijvingen;
-//    }
+    public static List<ToernooiTafelIndeling> verkrijgTafelIndelingVanToernooi(Toernooi toernooi) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from toernooi_tafelindeling where toernooiID = ?");
+        ps.setInt(1, toernooi.getID());
+
+        ResultSet rs = mysql.query(ps);
+
+        List<ToernooiTafelIndeling> indelingList = new ArrayList<>();
+
+        while (rs.next()) {
+            indelingList.add(new ToernooiTafelIndeling(rs));
+        }
+        return indelingList;
+    }
 }
