@@ -9,7 +9,7 @@ SQL:
 - [x] Speler inschrijven voor een masterclass
 - [ ] Overzicht tonen van totale inleggeld van een specifieke toernooi
 - [ ] Overzicht Tonen van het Aantal Begin tafels en het Aantal Spelers aan elke Tafel
-- [x] Overzicht tonen van de willekeurige tafelindeling bij de start van een toernooi.
+- [-] Overzicht tonen van de willekeurige tafelindeling bij de start van een toernooi.
 - [x] Overzicht tonen van de spelers en hun rating en het gewonnen inleggeld
 - [ ] Overzicht tonen van het aantal rondes per dag met de bijbehorende tafelindeling bij een specifiek toernooi
 
