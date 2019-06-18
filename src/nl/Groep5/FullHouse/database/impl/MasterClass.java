@@ -14,11 +14,11 @@ public class MasterClass {
 
     private int ID, locatieId;
     private Date datum;
-    private Timestamp beginTijd, eindTijd;
+    private String beginTijd, eindTijd;
     private double kosten, minRating;
     private int maxAantalInschrijvingen;
 
-    public MasterClass(int locatieId, Date datum, Timestamp beginTijd, Timestamp eindTijd, double kosten, double minRating, int maxAantalInschrijvingen) {
+    public MasterClass(int locatieId, Date datum, String beginTijd, String eindTijd, double kosten, double minRating, int maxAantalInschrijvingen) {
         this.locatieId = locatieId;
         this.datum = datum;
         this.beginTijd = beginTijd;
@@ -31,8 +31,8 @@ public class MasterClass {
     public MasterClass(ResultSet resultSet) throws SQLException {
         this.ID = resultSet.getInt("ID");
         this.datum = resultSet.getDate("datum");
-        this.beginTijd = resultSet.getTimestamp("beginTijd");
-        this.eindTijd = resultSet.getTimestamp("eindTijd");
+        this.beginTijd = resultSet.getString("beginTijd");
+        this.eindTijd = resultSet.getString("eindTijd");
         this.kosten = resultSet.getDouble("kosten");
         this.minRating = resultSet.getDouble("minRating");
         this.maxAantalInschrijvingen = resultSet.getInt("maxInschrijvingen");
@@ -59,19 +59,19 @@ public class MasterClass {
         this.datum = datum;
     }
 
-    public Timestamp getBeginTijd() {
+    public String getBeginTijd() {
         return beginTijd;
     }
 
-    public void setBeginTijd(Timestamp beginTijd) {
+    public void setBeginTijd(String beginTijd) {
         this.beginTijd = beginTijd;
     }
 
-    public Timestamp getEindTijd() {
+    public String getEindTijd() {
         return eindTijd;
     }
 
-    public void setEindTijd(Timestamp eindTijd) {
+    public void setEindTijd(String eindTijd) {
         this.eindTijd = eindTijd;
     }
 
@@ -168,8 +168,8 @@ public class MasterClass {
 
     private void FillPrepareStatement(PreparedStatement ps) throws SQLException {
         ps.setDate(1, this.datum);
-        ps.setTimestamp(2, this.beginTijd);
-        ps.setTimestamp(3, this.eindTijd);
+        ps.setString(2, this.beginTijd);
+        ps.setString(3, this.eindTijd);
         ps.setDouble(4, this.kosten);
         ps.setDouble(5, this.minRating);
         ps.setInt(6, this.maxAantalInschrijvingen);
