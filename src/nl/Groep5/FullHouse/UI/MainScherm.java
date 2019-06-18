@@ -5,6 +5,7 @@ import nl.Groep5.FullHouse.UI.Masterclass.SpelerMasterclassInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.SpelerToernooiInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
+import nl.Groep5.FullHouse.UI.Toernooi.ToernooiTafelIndelingScherm;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.impl.*;
 
@@ -510,6 +511,9 @@ public class MainScherm {
                                 break;
                             case "Overzicht inschrijvingen":
                                 OverzichtInschrijvingenToernooi.show(geselecteerdToernooi);
+                                break;
+                            case "Overzicht tafelindeling":
+                                ToernooiTafelIndelingScherm.show(geselecteerdToernooi);
                                 break;
                             case "Verwerk winnaars":
                                 try {

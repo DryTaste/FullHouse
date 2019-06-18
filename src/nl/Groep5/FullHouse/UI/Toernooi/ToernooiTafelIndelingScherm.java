@@ -24,7 +24,6 @@ public class ToernooiTafelIndelingScherm extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setMinimumSize(new Dimension(400, 300));
         setTitle("Toernooi tafelindeling: " + toernooi.getNaam());
         pack();
 
@@ -49,5 +48,11 @@ public class ToernooiTafelIndelingScherm extends JDialog {
     private void onOK() {
         // add your code here
         dispose();
+    }
+
+    public static void show(Toernooi toernooi) throws SQLException {
+        ToernooiTafelIndelingScherm dialog = new ToernooiTafelIndelingScherm(toernooi);
+        dialog.setMinimumSize(new Dimension(400, 300));
+        dialog.setVisible(true);
     }
 }
