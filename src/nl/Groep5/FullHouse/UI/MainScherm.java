@@ -590,6 +590,18 @@ public class MainScherm {
                 }
             }
         });
+        btnMasterclassZoeken.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                masterclassTabel.setModel(bouwMasterclassZoekResultaten(txtMasterClassZoeken));
+            }
+        });
+        btnMasterclassReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                masterclassTabel.setModel(bouwMasterclassTabel());
+            }
+        });
 
         /*
         *BEKENDE SPELER DEEL
@@ -804,6 +816,40 @@ public class MainScherm {
         Vector<Vector<Object>> masterclassData = new Vector<>();
         try {
             List<MasterClass> masterclassLijst = DatabaseHelper.verkrijgMasterClasses();
+            kollomNamen.add("ID");
+            kollomNamen.add("Datum");
+            kollomNamen.add("beginTijd");
+            kollomNamen.add("eindTijd");
+            kollomNamen.add("kosten");
+            kollomNamen.add("minRating");
+            kollomNamen.add("maxInschrijvingen");
+            for (MasterClass element : masterclassLijst){
+                Vector<Object> vector = new Vector<>();
+                vector.add(element.getID());
+                vector.add(element.getDatum());
+                vector.add(element.getBeginTijd());
+                vector.add(element.getEindTijd());
+                vector.add(element.getKosten());
+                vector.add(element.getMinRating());
+                vector.add(element.getMaxAantalInschrijvingen());
+                masterclassData.add(vector);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return new DefaultTableModel(masterclassData, kollomNamen){
+            @Override
+            public boolean isCellEditable(int row, int clumn){
+                return false;
+            }
+        };
+    }
+
+    public static DefaultTableModel bouwMasterclassZoekResultaten(TextFieldWithPlaceholder veld){
+        Vector<String> kollomNamen = new Vector<>();
+        Vector<Vector<Object>> masterclassData = new Vector<>();
+        try {
+            List<MasterClass> masterclassLijst = DatabaseHelper.verkrijgMasterClasses(veld.getText());
             kollomNamen.add("ID");
             kollomNamen.add("Datum");
             kollomNamen.add("beginTijd");
