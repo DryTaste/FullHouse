@@ -570,6 +570,10 @@ public class MainScherm {
                         int selectedIndex = (int) masterclassTabel.getValueAt(masterclassTabel.getSelectedRow(), 0);
                         MasterClass geselecteerdeMasterclass = DatabaseHelper.verkrijgMasterClassById(selectedIndex);
                         switch (String.valueOf(cbMasterclassUitvoeren.getItemAt(cbMasterclassUitvoeren.getSelectedIndex()))) {
+                            case "Bewerken":
+                                break;
+                            case "Aanmaken":
+                                break;
                             case "Speler inschrijven":
                                 SpelerMasterclassInschrijven.show(geselecteerdeMasterclass);
                                 break;
