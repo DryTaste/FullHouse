@@ -5,10 +5,7 @@ import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.SpelerToernooiInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
-import nl.Groep5.FullHouse.database.impl.Locatie;
-import nl.Groep5.FullHouse.database.impl.MasterClass;
-import nl.Groep5.FullHouse.database.impl.Speler;
-import nl.Groep5.FullHouse.database.impl.Toernooi;
+import nl.Groep5.FullHouse.database.impl.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -69,6 +66,7 @@ public class MainScherm {
     private JFormattedTextField txtSpelerRating;
     private JButton btnResetSpeler;
     private JTextField txtSpelerEmail;
+    private JTextField txtSpelerGewonnenInleggeld;
 
     private JButton btnResetToernooi;
     private JButton btnZoekenToernooi;
@@ -144,6 +142,7 @@ public class MainScherm {
                     txtSpelerEmail.setText(geselecteerdeSpeler.getEmail());
                     txtSpelerRating.setText(String.valueOf(geselecteerdeSpeler.getRating()));
                     cbSpelerGeslacht.setSelectedItem((geselecteerdeSpeler.getGeslacht() == 'M')?"Man":"Vrouw");
+                    txtSpelerGewonnenInleggeld.setText(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdeSpeler).stream().mapToDouble(ToernooiUitkomst::getPrijs).sum() + "");
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
