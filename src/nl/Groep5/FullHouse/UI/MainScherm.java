@@ -216,6 +216,12 @@ public class MainScherm {
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
                                 }
                                 try {
+                                    geselecteerdeSpeler.setEmail(txtSpelerEmail.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
                                     geselecteerdeSpeler.setGeboortedatum(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(txtSpelerGeboorteDatum.getText()).getTime()));
                                 }catch(ParseException dateParseError){
                                     validated = false;
@@ -275,6 +281,12 @@ public class MainScherm {
                                 }
                                 try {
                                     geselecteerdeSpeler.setTelefoonnummer(txtSpelerTelefoonnummer.getText());
+                                }catch(Exception error){
+                                    reValidated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdeSpeler.setEmail(txtSpelerEmail.getText());
                                 }catch(Exception error){
                                     reValidated = false;
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
