@@ -47,8 +47,13 @@ public class MasterClass {
         return locatieId;
     }
 
-    public void setLocatieId(int locatieId) {
-        this.locatieId = locatieId;
+    public void setLocatieId(int locatieId) throws Exception{
+        if(String.valueOf(locatieId).matches("\\d{1,2}")){
+            this.locatieId = locatieId;
+        }else{
+            throw new Exception("LocatieID moet 1 of 2 cijfers bevatten.");
+        }
+
     }
 
     public Date getDatum() {
@@ -63,8 +68,7 @@ public class MasterClass {
         return beginTijd;
     }
 
-    public void setBeginTijd(String beginTijd) {
-        this.beginTijd = beginTijd;
+    public void setBeginTijd(String beginTijd){
     }
 
     public String getEindTijd() {
@@ -79,24 +83,42 @@ public class MasterClass {
         return kosten;
     }
 
-    public void setKosten(double kosten) {
-        this.kosten = kosten;
+    public void setKosten(double kosten) throws Exception{
+        String regexDecimal = "^-?\\d*\\.\\d+$";
+        String regexInteger = "^-?\\d+$";
+        String regexDouble = regexDecimal + "|" + regexInteger;
+        if(String.valueOf(kosten).matches(regexDouble)) {
+            this.kosten = kosten;
+        }else{
+            throw new Exception("De kosten zijn incorrect ingevoerd.");
+        }
     }
 
     public double getMinRating() {
         return minRating;
     }
 
-    public void setMinRating(double minRating) {
-        this.minRating = minRating;
+    public void setMinRating(double minRating) throws Exception{
+        String regexDecimal = "^-?\\d*\\.\\d+$";
+        String regexInteger = "^-?\\d+$";
+        String regexDouble = regexDecimal + "|" + regexInteger;
+        if(String.valueOf(minRating).matches(regexDouble)) {
+            this.minRating = minRating;
+        }else{
+            throw new Exception("De minimale rating is incorrect ingevoerd.");
+        }
     }
 
     public int getMaxAantalInschrijvingen() {
         return maxAantalInschrijvingen;
     }
 
-    public void setMaxAantalInschrijvingen(int maxAantalInschrijvingen) {
-        this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+    public void setMaxAantalInschrijvingen(int maxAantalInschrijvingen) throws Exception{
+        if(String.valueOf(maxAantalInschrijvingen).matches("\\d{1,999999999}")) {
+            this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+        }else{
+            throw new Exception("Het maximaal aantal inschrijvingen moet 1 tot 999999999 zijn.");
+        }
     }
 
     public List<InschrijvingMasterclass> getInschrijvingen() throws SQLException {

@@ -52,9 +52,9 @@ public class MainScherm {
     private JTextField txtToernooiSluitingInschrijving;
     private TextFieldWithPlaceholder txtToernooiZoeken;
 
-    private JTextField txtMasterClassDatum;
-    private JTextField txtMasterClassBeginTijd;
-    private JTextField txtMasterClassEindDatum;
+    private JFormattedTextField txtMasterClassDatum;
+    private JFormattedTextField txtMasterClassBeginTijd;
+    private JFormattedTextField txtMasterClassEindTijd;
     private JTextField txtMasterClassKosten;
     private JTextField txtMasterClassMinRating;
     private JButton btnMasterclassUitvoeren;
@@ -91,6 +91,7 @@ public class MainScherm {
     private JTextField txtBekendeSpelerNaam;
     private JButton btnSpelerUitloggen;
     private JButton btnToernooiUitloggen;
+    private JComboBox cbMasterclassLocaties;
 
 
     public MainScherm() {
@@ -106,6 +107,9 @@ public class MainScherm {
             new MaskFormatter("####-##-##").install(txtToernooiDatum);
             new MaskFormatter("##:##").install(txtToernooiBeginTijd);
             new MaskFormatter("##:##").install(txtToernooiEindTijd);
+            new MaskFormatter("####-##-##").install(txtMasterClassDatum);
+            new MaskFormatter("##:##").install(txtMasterClassBeginTijd);
+            new MaskFormatter("##:##").install(txtMasterClassEindTijd);
         }catch(ParseException fieldFormatError){
             fieldFormatError.printStackTrace();
         }
@@ -560,6 +564,31 @@ public class MainScherm {
         /*
         *MASTERCLASS DEEL
          */
+        masterclassTabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                try{
+                    int selectedIndex = (int) masterclassTabel.getValueAt(masterclassTabel.getSelectedRow(), 0);
+                    MasterClass geselecteerdeMasterclass = DatabaseHelper.verkrijgMasterClassById(selectedIndex);
+                    List<Locatie> locatieLijst = DatabaseHelper.verkrijgLocatieLijst();
+                    Locatie locatie = DatabaseHelper.verkrijgLocatieById(geselecteerdeMasterclass.getLocatieId());
+
+                    txtMasterClassDatum.setText(String.valueOf(geselecteerdeMasterclass.getDatum()));
+                    txtMasterClassBeginTijd.setText(String.valueOf(geselecteerdeMasterclass.getBeginTijd()));
+                    txtMasterClassEindTijd.setText(geselecteerdeMasterclass.getEindTijd());
+                    txtMasterClassKosten.setText(String.valueOf(geselecteerdeMasterclass.getKosten()));
+                    txtMasterClassMinRating.setText(String.valueOf(geselecteerdeMasterclass.getMinRating()));
+                    cbMasterclassLocaties.removeAllItems();
+                    ArrayList<Integer> idIndex = new ArrayList<>();
+                    for(Locatie element : locatieLijst){
+                        cbMasterclassLocaties.addItem(new ComboItem(element.getNaam(),String.valueOf(element.getID())));
+                        idIndex.add(element.getID());
+                    }
+                    cbMasterclassLocaties.setSelectedIndex(idIndex.indexOf(geselecteerdeMasterclass.getLocatieId()));
+                }catch(SQLException q){
+                    q.printStackTrace();
+                }
+            }
+        });
         btnMasterclassUitvoeren.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
