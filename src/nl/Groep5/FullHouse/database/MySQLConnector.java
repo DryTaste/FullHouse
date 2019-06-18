@@ -33,7 +33,7 @@ public class MySQLConnector {
     private void connect() {
         try {
             System.out.println("[MySQL] Attempting to login to database");
-                con = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/" + database + "?autoReconnect=true&maxReconnects=2&serverTimezone=" + TimeZone.getDefault().getID(),
+                con = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/" + database + "?autoReconnect=true&maxReconnects=2&maxTimeout=5&serverTimezone=" + TimeZone.getDefault().getID(),
                     user, password);
 
 

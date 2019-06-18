@@ -25,6 +25,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
     private JLabel lWinnaar2;
     private JSpinner sW1;
     private JSpinner sW2;
+    private JLabel lToernooiGeld;
 
 
     public ToernooiResultaatScherm(Toernooi toernooi) {
@@ -49,8 +50,12 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-
         try {
+            DecimalFormat df = new DecimalFormat("#.##");
+            double totaalGeld = toernooi.getInleg() * toernooi.getInschrijvingen().size();
+            lToernooiGeld.setText("Totale inleggeld: €" + df.format(totaalGeld));
+
+
             for (InschrijvingToernooi inschrijving : toernooi.getInschrijvingen()) {
                 spelerListModel.addElement(new SpelerInschrijving(inschrijving.getSpeler()));
             }
@@ -156,7 +161,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
             tuw1.Save();
             tuw2.Save();
 
-            DecimalFormat df = new DecimalFormat("#.00");
+            DecimalFormat df = new DecimalFormat("#.##");
             JOptionPane.showMessageDialog(this,
                     String.format("Speler %s heeft %s en speler %s heeft %s ontvangen!",
                             spelerWinnaar1.getVoornaam(),
