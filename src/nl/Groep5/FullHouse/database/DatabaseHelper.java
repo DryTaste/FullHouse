@@ -123,6 +123,40 @@ public class DatabaseHelper {
     /**
      * Verkrijg lijst met MasterClassen
      *
+     * @param filter Filter bij het verkrijgen van masterclasses
+     * @return Lijst met MasterClass objecten
+     * @throws SQLException
+     */
+    public static List<MasterClass> verkrijgMasterClasses(String filter) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps;
+        if (filter == null || filter.isEmpty()) {
+            ps = mysql.prepareStatement("select * from masterclass");
+        }else{
+            ps = mysql.prepareStatement("select * from masterclass where datum like ? or beginTijd like ? or eindTijd like ? or kosten like ? or minRating like ? or maxInschrijvingen like ? or locatieID = ? or ID = ?");
+            ps.setString(1, filter);
+            ps.setString(2, filter);
+            ps.setString(3, filter);
+            ps.setString(4, filter);
+            ps.setString(5, filter);
+            ps.setString(6, filter);
+            ps.setString(7, filter);
+            ps.setString(8, filter);
+        }
+        ResultSet rs = mysql.query(ps);
+
+        List<MasterClass> masterClasses = new ArrayList<>();
+
+        while (rs.next()) {
+            masterClasses.add(new MasterClass(rs));
+        }
+
+        return masterClasses;
+    }
+
+    /**
+     * Verkrijg lijst met MasterClassen
+     *
      * @return Lijst met MasterClass objecten
      * @throws SQLException
      */
