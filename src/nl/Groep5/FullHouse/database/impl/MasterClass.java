@@ -16,9 +16,9 @@ public class MasterClass {
     private Date datum;
     private String beginTijd, eindTijd;
     private double kosten, minRating;
-    private int maxAantalInschrijvingen;
+    private int maxAantalInschrijvingen, leraar;
 
-    public MasterClass(int locatieId, Date datum, String beginTijd, String eindTijd, double kosten, double minRating, int maxAantalInschrijvingen) {
+    public MasterClass(int locatieId, Date datum, String beginTijd, String eindTijd, double kosten, double minRating, int maxAantalInschrijvingen, int leraar) {
         this.locatieId = locatieId;
         this.datum = datum;
         this.beginTijd = beginTijd;
@@ -26,6 +26,7 @@ public class MasterClass {
         this.kosten = kosten;
         this.minRating = minRating;
         this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+        this.leraar = leraar;
     }
 
     public MasterClass(ResultSet resultSet) throws SQLException {
@@ -37,6 +38,7 @@ public class MasterClass {
         this.minRating = resultSet.getDouble("minRating");
         this.maxAantalInschrijvingen = resultSet.getInt("maxInschrijvingen");
         this.locatieId = resultSet.getInt("locatieID");
+        this.leraar = resultSet.getInt("leraar");
     }
 
     public int getID() {
@@ -47,8 +49,25 @@ public class MasterClass {
         return locatieId;
     }
 
-    public void setLocatieId(int locatieId) {
-        this.locatieId = locatieId;
+    public int getLeraar(){
+        return leraar;
+    }
+
+    public void setLeraar(int leraar) throws Exception{
+        if(String.valueOf(leraar).matches("\\d{1,4}")){
+            this.leraar = leraar;
+        }else{
+            throw new Exception("Leraar moet tussen 1 en 4 cijfers bevatten.");
+        }
+    }
+
+    public void setLocatieId(int locatieId) throws Exception{
+        if(String.valueOf(locatieId).matches("\\d{1,2}")){
+            this.locatieId = locatieId;
+        }else{
+            throw new Exception("LocatieID moet 1 of 2 cijfers bevatten.");
+        }
+
     }
 
     public Date getDatum() {
@@ -63,7 +82,7 @@ public class MasterClass {
         return beginTijd;
     }
 
-    public void setBeginTijd(String beginTijd) {
+    public void setBeginTijd(String beginTijd){
         this.beginTijd = beginTijd;
     }
 
@@ -79,24 +98,42 @@ public class MasterClass {
         return kosten;
     }
 
-    public void setKosten(double kosten) {
-        this.kosten = kosten;
+    public void setKosten(double kosten) throws Exception{
+        String regexDecimal = "^-?\\d*\\.\\d+$";
+        String regexInteger = "^-?\\d+$";
+        String regexDouble = regexDecimal + "|" + regexInteger;
+        if(String.valueOf(kosten).matches(regexDouble)) {
+            this.kosten = kosten;
+        }else{
+            throw new Exception("De kosten zijn incorrect ingevoerd.");
+        }
     }
 
     public double getMinRating() {
         return minRating;
     }
 
-    public void setMinRating(double minRating) {
-        this.minRating = minRating;
+    public void setMinRating(double minRating) throws Exception{
+        String regexDecimal = "^-?\\d*\\.\\d+$";
+        String regexInteger = "^-?\\d+$";
+        String regexDouble = regexDecimal + "|" + regexInteger;
+        if(String.valueOf(minRating).matches(regexDouble)) {
+            this.minRating = minRating;
+        }else{
+            throw new Exception("De minimale rating is incorrect ingevoerd.");
+        }
     }
 
     public int getMaxAantalInschrijvingen() {
         return maxAantalInschrijvingen;
     }
 
-    public void setMaxAantalInschrijvingen(int maxAantalInschrijvingen) {
-        this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+    public void setMaxAantalInschrijvingen(int maxAantalInschrijvingen) throws Exception{
+        if(String.valueOf(maxAantalInschrijvingen).matches("\\d{1,999999999}")) {
+            this.maxAantalInschrijvingen = maxAantalInschrijvingen;
+        }else{
+            throw new Exception("Het maximaal aantal inschrijvingen moet 1 tot 999999999 zijn.");
+        }
     }
 
     public List<InschrijvingMasterclass> getInschrijvingen() throws SQLException {
@@ -143,7 +180,7 @@ public class MasterClass {
      */
     public boolean Save() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `masterclass` (`datum`, `beginTijd`, `eindTijd`, `kosten`, `minRating`, `maxInschrijvingen`, `locatieID`) VALUES (?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `masterclass` (`datum`, `beginTijd`, `eindTijd`, `kosten`, `minRating`, `maxInschrijvingen`, `locatieID`, leraar) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         FillPrepareStatement(ps);
 
         // check if the update is 1 (1 row updated/added)
@@ -158,9 +195,9 @@ public class MasterClass {
      */
     public boolean Update() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("UPDATE `masterclass` SET `datum`=?, `beginTijd`=?, `eindTijd`=?, `kosten`=?, `minRating`=?, `maxInschrijvingen`=?, `locatieID`=? WHERE `ID`=?;");
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `masterclass` SET `datum`=?, `beginTijd`=?, `eindTijd`=?, `kosten`=?, `minRating`=?, `maxInschrijvingen`=?, `locatieID`=?, `leraar`=? WHERE `ID`=?;");
         FillPrepareStatement(ps);
-        ps.setInt(8, this.ID);
+        ps.setInt(9, this.ID);
 
         // check if the update is 1 (1 row updated/added)
         return mysql.update(ps) == 1;
@@ -174,6 +211,7 @@ public class MasterClass {
         ps.setDouble(5, this.minRating);
         ps.setInt(6, this.maxAantalInschrijvingen);
         ps.setInt(7, this.locatieId);
+        ps.setInt(8, this.leraar);
     }
 
     @Override
