@@ -1,6 +1,7 @@
 package nl.Groep5.FullHouse.UI;
 
 import nl.Groep5.FullHouse.UI.Masterclass.OverzichtInschrijvingenMasterclass;
+import nl.Groep5.FullHouse.UI.Masterclass.SpelerMasterclassInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.OverzichtInschrijvingenToernooi;
 import nl.Groep5.FullHouse.UI.Toernooi.SpelerToernooiInschrijven;
 import nl.Groep5.FullHouse.UI.Toernooi.ToernooiResultaatScherm;
@@ -86,6 +87,9 @@ public class MainScherm {
     private JButton btnBekendeReset;
     private JButton btnBekendeUitvoeren;
     private JComboBox cbBekende;
+    private JTextField txtBekendeSpelerNaam;
+    private JButton btnSpelerUitloggen;
+    private JButton btnToernooiUitloggen;
 
 
     public MainScherm() {
@@ -119,6 +123,8 @@ public class MainScherm {
                     case 2:
                         masterclassTabel.setModel(bouwMasterclassTabel());
                         break;
+                    case 3:
+                        bekendeTabel.setModel(bouwBekendeSpelerTabel());
                 }
             }
         });
@@ -321,6 +327,13 @@ public class MainScherm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 spelerTabel.setModel(bouwSpelerTabel());
+            }
+        });
+        btnSpelerUitloggen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new InlogScherm();
             }
         });
 
@@ -532,6 +545,13 @@ public class MainScherm {
                 toernooiTabel.setModel(bouwToernooienTabel());
             }
         });
+        btnToernooiUitloggen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new InlogScherm();
+            }
+        });
 
         /*
         *MASTERCLASS DEEL
@@ -546,9 +566,11 @@ public class MainScherm {
                         int selectedIndex = (int) masterclassTabel.getValueAt(masterclassTabel.getSelectedRow(), 0);
                         MasterClass geselecteerdeMasterclass = DatabaseHelper.verkrijgMasterClassById(selectedIndex);
                         switch (String.valueOf(cbMasterclassUitvoeren.getItemAt(cbMasterclassUitvoeren.getSelectedIndex()))) {
+                            case "Speler inschrijven":
+                                SpelerMasterclassInschrijven.show(geselecteerdeMasterclass);
+                                break;
                             case "Overzicht inschrijvingen":
                                 OverzichtInschrijvingenMasterclass.show(geselecteerdeMasterclass);
-                                System.out.println("Executed");
                                 break;
                         }
                     } catch (SQLException uitvoerFout) {
@@ -560,6 +582,76 @@ public class MainScherm {
                 }
             }
         });
+
+        /*
+        *BEKENDE SPELER DEEL
+         */
+        bekendeTabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                try{
+                    int selectedIndex = (int) bekendeTabel.getValueAt(bekendeTabel.getSelectedRow(), 0);
+                    BekendeSpeler geselecteerdeBekendeSpeler = DatabaseHelper.verkrijgBekendeSpelerBijId(selectedIndex);
+                    txtBekendeSpelerNaam.setText(geselecteerdeBekendeSpeler.getPseudonaam());
+                }catch(SQLException q){
+                    q.printStackTrace();
+                }
+            }
+        });
+        btnBekendeUitvoeren.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (bekendeTabel.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(frame, "U moet eerst een selectie maken voordat u een bewerking kunt doen.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    try {
+                        int selectedIndex = (int) bekendeTabel.getValueAt(bekendeTabel.getSelectedRow(), 0);
+                        BekendeSpeler geselecteerdeBekendeSpeler = DatabaseHelper.verkrijgBekendeSpelerBijId(selectedIndex);
+                        boolean validated = true;
+                        switch (String.valueOf(cbBekende.getItemAt(cbBekende.getSelectedIndex()))) {
+                            case "Bewerken":
+                                try{
+                                    geselecteerdeBekendeSpeler.setPseudonaam(txtBekendeSpelerNaam.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                if(validated && geselecteerdeBekendeSpeler.Update()) {
+                                    JOptionPane.showMessageDialog(frame, "Gebruiker succesvol bewerkt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
+                                }
+                                break;
+                            case "Aanmaken":
+                                try{
+                                    geselecteerdeBekendeSpeler.setPseudonaam(txtBekendeSpelerNaam.getText());
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                if(validated && geselecteerdeBekendeSpeler.Save()) {
+                                    JOptionPane.showMessageDialog(frame, "Gebruiker succesvol aangemaakt.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
+                                }
+                                break;
+                            case "Verwijderen":
+                                if(geselecteerdeBekendeSpeler.Delete()) {
+                                    JOptionPane.showMessageDialog(frame, "Gebruiker succesvol verwijdert.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    JOptionPane.showMessageDialog(frame, "Database error! Neem contact op met een beheerder.","Fatal", JOptionPane.ERROR_MESSAGE);
+                                }
+                                break;
+                        }
+                    } catch (SQLException uitvoerFout) {
+                        uitvoerFout.printStackTrace();
+                    }
+                    int selectedRow = bekendeTabel.getSelectedRow();
+                    bekendeTabel.setModel(bouwBekendeSpelerTabel());
+                    bekendeTabel.setRowSelectionInterval(selectedRow, selectedRow);
+                }
+            }
+        });
+
     }
 
 
@@ -726,6 +818,30 @@ public class MainScherm {
             e.printStackTrace();
         }
         return new DefaultTableModel(masterclassData, kollomNamen){
+            @Override
+            public boolean isCellEditable(int row, int clumn){
+                return false;
+            }
+        };
+    }
+
+    public static DefaultTableModel bouwBekendeSpelerTabel(){
+        Vector<String> kollomNamen = new Vector<>();
+        Vector<Vector<Object>> bekendeSpelerData = new Vector<>();
+        try {
+            List<BekendeSpeler> masterclassLijst = DatabaseHelper.verkrijgBekendeSpelers();
+            kollomNamen.add("ID");
+            kollomNamen.add("Naam");
+            for (BekendeSpeler element : masterclassLijst){
+                Vector<Object> vector = new Vector<>();
+                vector.add(element.getId());
+                vector.add(element.getPseudonaam());
+                bekendeSpelerData.add(vector);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return new DefaultTableModel(bekendeSpelerData, kollomNamen){
             @Override
             public boolean isCellEditable(int row, int clumn){
                 return false;

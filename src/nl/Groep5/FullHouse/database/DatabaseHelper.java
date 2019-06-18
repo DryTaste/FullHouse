@@ -54,6 +54,34 @@ public class DatabaseHelper {
         return spelers;
     }
 
+    public static List<BekendeSpeler> verkrijgBekendeSpelers() throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps;
+
+            ps = mysql.prepareStatement("select * from bekende_speler");
+
+        ResultSet rs = mysql.query(ps);
+
+        List<BekendeSpeler> bekendeSpelers = new ArrayList<>();
+
+        while (rs.next()) {
+            bekendeSpelers.add(new BekendeSpeler(rs));
+        }
+
+        return bekendeSpelers;
+    }
+
+    public static BekendeSpeler verkrijgBekendeSpelerBijId(int id) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from bekende_speler where ID = ?");
+        ps.setInt(1, id);
+        ResultSet rs = mysql.query(ps);
+
+        if (rs.next()) return new BekendeSpeler(rs);
+
+        return null;
+    }
+
     /**
      * Verkrijg een {@link Speler} dat bij de ID hoort
      *
