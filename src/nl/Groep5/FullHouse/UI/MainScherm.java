@@ -14,7 +14,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -157,7 +156,7 @@ public class MainScherm {
                     txtSpelerEmail.setText(geselecteerdeSpeler.getEmail());
                     txtSpelerRating.setText(String.valueOf(geselecteerdeSpeler.getRating()));
                     cbSpelerGeslacht.setSelectedItem((geselecteerdeSpeler.getGeslacht() == 'M')?"Man":"Vrouw");
-                    txtSpelerGewonnenInleggeld.setText(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdeSpeler).stream().mapToDouble(ToernooiUitkomst::getPrijs).sum() + "");
+                    txtSpelerGewonnenInleggeld.setText("€" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdeSpeler).stream().mapToDouble(ToernooiUitkomst::getPrijs).sum() + "");
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
@@ -548,6 +547,15 @@ public class MainScherm {
                                 } catch (SQLException | NullPointerException ex) {
                                     JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
                                     ex.printStackTrace();
+                                }
+                                break;
+                            case "Verwijder winnaars":
+                                break;
+                            case "Bekijk winnaars":
+                                if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
+                                    JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
+                                }else{
+                                    
                                 }
                                 break;
                         }

@@ -520,6 +520,8 @@
                         <item value="Aanmaken"/>
                         <item value="Speler inschrijven"/>
                         <item value="Verwerk winnaars"/>
+                        <item value="Bekijk winnaars"/>
+                        <item value="Verwijder winnaars"/>
                         <item value="Overzicht inschrijvingen"/>
                         <item value="Overzicht tafelindeling"/>
                       </model>
