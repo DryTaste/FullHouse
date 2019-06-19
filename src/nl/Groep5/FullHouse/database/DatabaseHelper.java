@@ -402,6 +402,20 @@ public class DatabaseHelper {
     }
 
     /**
+     * Delete uitkomsten uit de database per ID
+     *
+     * @param ID
+     * @throws SQLException
+     */
+    public static void verwijderToernooiUitkomstByToernooiID(int ID) throws SQLException{
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("delete from toernooi_uitkomsten where toernooiID = ?");
+        ps.setInt(1, ID);
+        mysql.update(ps);
+    }
+
+
+    /**
      * Verkrijg een lijst met uitkomsten van Speler
      *
      * @param speler

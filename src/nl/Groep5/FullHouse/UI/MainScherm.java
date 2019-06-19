@@ -542,7 +542,7 @@ public class MainScherm {
                                     if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
                                         ToernooiResultaatScherm.show(geselecteerdToernooi);
                                     }else {
-                                        JOptionPane.showMessageDialog(mainPanel, "Er zijn al resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
+                                        JOptionPane.showMessageDialog(mainPanel, "Er zijn al resultaten ingevoerd, verwijder de winnaar gegevens eerst voordat u nieuwe invoerd.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
                                     }
                                 } catch (SQLException | NullPointerException ex) {
                                     JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
@@ -550,10 +550,17 @@ public class MainScherm {
                                 }
                                 break;
                             case "Verwijder winnaars":
+                                if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
+                                    JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd, u moet eerst resultaten invoeren voordat u deze kunt verwijderen.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                                }else{
+                                    int eersteID = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getToernooiID();
+                                    DatabaseHelper.verwijderToernooiUitkomstByToernooiID(eersteID);
+                                    JOptionPane.showMessageDialog(mainPanel, "Gegevens succesvol verwijdert.", "Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }
                                 break;
                             case "Bekijk winnaars":
                                 if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
-                                    JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd, u moet eerst resultaten invoeren voordat u deze kunt bekijken.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
                                 }else{
                                     Speler eerstePlaats = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getSpeler();
                                     Speler tweedePlaats = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(1).getSpeler();
@@ -561,7 +568,7 @@ public class MainScherm {
                                     String tweedePlaatsVoegsel = tweedePlaats.getTussenvoegsel().isEmpty()?"":" ";
                                     String eerstePlaatsString = "1e plaats: (" + eerstePlaats.getID() + ") " + eerstePlaats.getVoornaam() + " " + eerstePlaats.getTussenvoegsel() + eerstePlaatsVoegsel + eerstePlaats.getAchternaam() + "\n Gewonnen prijzengeld: €" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getPrijs();
                                     String tweedePlaatsString = "2e plaats: (" + tweedePlaats.getID() + ") " + tweedePlaats.getVoornaam() + " " + tweedePlaats.getTussenvoegsel() + tweedePlaatsVoegsel + tweedePlaats.getAchternaam() + "\n Gewonnen prijzengeld: €" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(1).getPrijs();
-                                    JOptionPane.showMessageDialog(mainPanel, eerstePlaatsString + "\n\n" + tweedePlaatsString, "Winnaars", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(mainPanel, eerstePlaatsString + "\n\n" + tweedePlaatsString, "Winnaars", JOptionPane.PLAIN_MESSAGE);
                                 }
                                 break;
                         }
