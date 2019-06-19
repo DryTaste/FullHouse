@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -94,6 +95,7 @@ public class MainScherm {
     private JButton btnToernooiUitloggen;
     private JComboBox cbMasterclassLocaties;
     private JComboBox cbMasterClassLeraar;
+    private JTextField veldToernooiInleggeld;
 
 
     public MainScherm() {
@@ -382,6 +384,9 @@ public class MainScherm {
                         idIndex.add(element.getID());
                     }
                     cbToernooiLocaties.setSelectedIndex(idIndex.indexOf(geselecteerdToernooi.getLocatieID()));
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    double totaalGeld = geselecteerdToernooi.getInleg() * geselecteerdToernooi.getInschrijvingen().size();
+                    veldToernooiInleggeld.setText("€" + df.format(totaalGeld));
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
