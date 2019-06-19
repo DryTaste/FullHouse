@@ -14,13 +14,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -94,6 +94,7 @@ public class MainScherm {
     private JButton btnToernooiUitloggen;
     private JComboBox cbMasterclassLocaties;
     private JComboBox cbMasterClassLeraar;
+    private JTextField veldToernooiInleggeld;
 
 
     public MainScherm() {
@@ -155,7 +156,7 @@ public class MainScherm {
                     txtSpelerEmail.setText(geselecteerdeSpeler.getEmail());
                     txtSpelerRating.setText(String.valueOf(geselecteerdeSpeler.getRating()));
                     cbSpelerGeslacht.setSelectedItem((geselecteerdeSpeler.getGeslacht() == 'M')?"Man":"Vrouw");
-                    txtSpelerGewonnenInleggeld.setText(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdeSpeler).stream().mapToDouble(ToernooiUitkomst::getPrijs).sum() + "");
+                    txtSpelerGewonnenInleggeld.setText("€" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdeSpeler).stream().mapToDouble(ToernooiUitkomst::getPrijs).sum() + "");
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
@@ -382,6 +383,9 @@ public class MainScherm {
                         idIndex.add(element.getID());
                     }
                     cbToernooiLocaties.setSelectedIndex(idIndex.indexOf(geselecteerdToernooi.getLocatieID()));
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    double totaalGeld = geselecteerdToernooi.getInleg() * geselecteerdToernooi.getInschrijvingen().size();
+                    veldToernooiInleggeld.setText("€" + df.format(totaalGeld));
                 }catch(SQLException q){
                     q.printStackTrace();
                 }
@@ -538,11 +542,33 @@ public class MainScherm {
                                     if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
                                         ToernooiResultaatScherm.show(geselecteerdToernooi);
                                     }else {
-                                        JOptionPane.showMessageDialog(mainPanel, "Er zijn al resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
+                                        JOptionPane.showMessageDialog(mainPanel, "Er zijn al resultaten ingevoerd, verwijder de winnaar gegevens eerst voordat u nieuwe invoerd.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
                                     }
                                 } catch (SQLException | NullPointerException ex) {
                                     JOptionPane.showMessageDialog(mainPanel, "Er is een fout opgetreden tijdens het ophalen van toernooi gegevens", "Woeps", JOptionPane.ERROR_MESSAGE);
                                     ex.printStackTrace();
+                                }
+                                break;
+                            case "Verwijder winnaars":
+                                if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
+                                    JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd, u moet eerst resultaten invoeren voordat u deze kunt verwijderen.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                                }else{
+                                    int eersteID = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getToernooiID();
+                                    DatabaseHelper.verwijderToernooiUitkomstByToernooiID(eersteID);
+                                    JOptionPane.showMessageDialog(mainPanel, "Gegevens succesvol verwijdert.", "Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                break;
+                            case "Bekijk winnaars":
+                                if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
+                                    JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd, u moet eerst resultaten invoeren voordat u deze kunt bekijken.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                                }else{
+                                    Speler eerstePlaats = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getSpeler();
+                                    Speler tweedePlaats = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(1).getSpeler();
+                                    String eerstePlaatsVoegsel = eerstePlaats.getTussenvoegsel().isEmpty()?"":" ";
+                                    String tweedePlaatsVoegsel = tweedePlaats.getTussenvoegsel().isEmpty()?"":" ";
+                                    String eerstePlaatsString = "1e plaats: (" + eerstePlaats.getID() + ") " + eerstePlaats.getVoornaam() + " " + eerstePlaats.getTussenvoegsel() + eerstePlaatsVoegsel + eerstePlaats.getAchternaam() + "\n Gewonnen prijzengeld: €" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getPrijs();
+                                    String tweedePlaatsString = "2e plaats: (" + tweedePlaats.getID() + ") " + tweedePlaats.getVoornaam() + " " + tweedePlaats.getTussenvoegsel() + tweedePlaatsVoegsel + tweedePlaats.getAchternaam() + "\n Gewonnen prijzengeld: €" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(1).getPrijs();
+                                    JOptionPane.showMessageDialog(mainPanel, eerstePlaatsString + "\n\n" + tweedePlaatsString, "Winnaars", JOptionPane.PLAIN_MESSAGE);
                                 }
                                 break;
                         }
