@@ -181,10 +181,10 @@ public class Speler {
     }
 
     public void setEmail(String email) throws Exception {
-        if(email.matches(".{8,30}")) {
+        if(email.matches(".{0,30}")) {
             this.email = email;
         }else{
-            throw new Exception("Een valide email adres bestaat uit 8 tot 30 karakters.");
+            throw new Exception("Een email mag niet langer zijn dan 30 karakters.");
         }
     }
 

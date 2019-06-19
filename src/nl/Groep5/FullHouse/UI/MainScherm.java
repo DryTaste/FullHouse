@@ -555,7 +555,13 @@ public class MainScherm {
                                 if(DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).isEmpty()) {
                                     JOptionPane.showMessageDialog(mainPanel, "Er zijn nog geen resultaten ingevoerd !", "Fout", JOptionPane.INFORMATION_MESSAGE);
                                 }else{
-                                    
+                                    Speler eerstePlaats = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getSpeler();
+                                    Speler tweedePlaats = DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(1).getSpeler();
+                                    String eerstePlaatsVoegsel = eerstePlaats.getTussenvoegsel().isEmpty()?"":" ";
+                                    String tweedePlaatsVoegsel = tweedePlaats.getTussenvoegsel().isEmpty()?"":" ";
+                                    String eerstePlaatsString = "1e plaats: (" + eerstePlaats.getID() + ") " + eerstePlaats.getVoornaam() + " " + eerstePlaats.getTussenvoegsel() + eerstePlaatsVoegsel + eerstePlaats.getAchternaam() + "\n Gewonnen prijzengeld: €" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(0).getPrijs();
+                                    String tweedePlaatsString = "2e plaats: (" + tweedePlaats.getID() + ") " + tweedePlaats.getVoornaam() + " " + tweedePlaats.getTussenvoegsel() + tweedePlaatsVoegsel + tweedePlaats.getAchternaam() + "\n Gewonnen prijzengeld: €" + DatabaseHelper.verkrijgToernooiUikomsten(geselecteerdToernooi).get(1).getPrijs();
+                                    JOptionPane.showMessageDialog(mainPanel, eerstePlaatsString + "\n\n" + tweedePlaatsString, "Winnaars", JOptionPane.INFORMATION_MESSAGE);
                                 }
                                 break;
                         }
