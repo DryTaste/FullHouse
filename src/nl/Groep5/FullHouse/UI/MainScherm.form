@@ -524,6 +524,7 @@
                         <item value="Verwijder winnaars"/>
                         <item value="Overzicht inschrijvingen"/>
                         <item value="Overzicht tafelindeling"/>
+                        <item value="Reset tafelindeling"/>
                       </model>
                     </properties>
                   </component>

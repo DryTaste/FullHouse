@@ -564,4 +564,14 @@ public class DatabaseHelper {
             mysql.update(ps);
         }
     }
+
+    public static void verwijderStoelenEnTafels(int ToernooiID) throws SQLException{
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("delete from toernooi_tafelindeling where toernooiID = ?");
+        ps.setInt(1, ToernooiID);
+        mysql.update(ps);
+        PreparedStatement ps1= mysql.prepareStatement("delete from Toernooi_tafels where toernooiID = ?");
+        ps1.setInt(1, ToernooiID);
+        mysql.update(ps1);
+    }
 }
