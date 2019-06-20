@@ -1,8 +1,5 @@
-package nl.Groep5.FullHouse.UI;
+package nl.Groep5.FullHouse.UI.Toernooi;
 
-import jdk.nashorn.internal.scripts.JO;
-import nl.Groep5.FullHouse.Main;
-import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.impl.InschrijvingToernooi;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
@@ -28,6 +25,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
     private JLabel lWinnaar2;
     private JSpinner sW1;
     private JSpinner sW2;
+    private JLabel lToernooiGeld;
 
 
     public ToernooiResultaatScherm(Toernooi toernooi) {
@@ -36,6 +34,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setTitle("Fullhouse - Toernooi winnaars verwerken");
 
         buttonOK.addActionListener(e -> onOK(spelerListModel, toernooi));
 
@@ -52,8 +51,12 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-
         try {
+            DecimalFormat df = new DecimalFormat("#.##");
+            double totaalGeld = toernooi.getInleg() * toernooi.getInschrijvingen().size();
+            lToernooiGeld.setText("Totale inleggeld: €" + df.format(totaalGeld));
+
+
             for (InschrijvingToernooi inschrijving : toernooi.getInschrijvingen()) {
                 spelerListModel.addElement(new SpelerInschrijving(inschrijving.getSpeler()));
             }
@@ -159,7 +162,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
             tuw1.Save();
             tuw2.Save();
 
-            DecimalFormat df = new DecimalFormat("#.00");
+            DecimalFormat df = new DecimalFormat("#.##");
             JOptionPane.showMessageDialog(this,
                     String.format("Speler %s heeft %s en speler %s heeft %s ontvangen!",
                             spelerWinnaar1.getVoornaam(),
@@ -184,6 +187,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         ToernooiResultaatScherm dialog = new ToernooiResultaatScherm(toernooi);
 //        dialog.pack();
         dialog.setMinimumSize(new Dimension(420, 270));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 
@@ -227,10 +231,7 @@ class SpelerInschrijving{
 
     @Override
     public String toString() {
-        if(speler.getTussenvoegsel() == null || speler.getTussenvoegsel().isEmpty())
-            return String.format("%s %s", speler.getVoornaam(), speler.getAchternaam());
-
-        return String.format("%s %s %s", speler.getVoornaam(), speler.getTussenvoegsel(), speler.getAchternaam());
+       return speler.toString();
     }
 }
 

@@ -4,7 +4,10 @@ import nl.Groep5.FullHouse.Main;
 import nl.Groep5.FullHouse.database.DatabaseHelper;
 import nl.Groep5.FullHouse.database.MySQLConnector;
 
-import java.sql.*;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -53,7 +56,7 @@ public class Toernooi {
 
 
     public void setLocatieID(int locatieID) throws Exception {
-        if(String.valueOf(locatieID).matches("\\d{2}")) {
+        if(String.valueOf(locatieID).matches("\\d{1,2}")) {
             this.locatieID = locatieID;
         }else{
             throw new Exception("Locatie ID moet 2 cijfers bevatten.");
@@ -202,9 +205,9 @@ public class Toernooi {
      */
     public boolean Update() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi` SET `naam`=?, `datum`=?, `beginTijd`=?, `eindTijd`=?, `beschrijving`=?, `maxInschrijvingen`=?, `inleg`=?, `uitersteInschrijfDatum`=?, `locatieID`=?  WHERE `ID`=?;");
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi` SET `naam`=?, `datum`=?, `beginTijd`=?, `eindTijd`=?, `beschrijving`=?, `maxInschrijvingen`=?, `inleg`=?, `uitersteInschrijfDatum`=?  WHERE `ID`=?;");
         FillPrepareStatement(ps);
-        ps.setInt(10, this.ID);
+        ps.setInt(9, this.ID);
 
         // check if the update is 1 (1 row updated/added)
         return mysql.update(ps) == 1;
@@ -219,6 +222,18 @@ public class Toernooi {
         ps.setInt(6, this.maxInschrijvingen);
         ps.setDouble(7, this.inleg);
         ps.setDate(8, this.uitersteInschrijfDatum);
-        ps.setInt(9, this.locatieID);
+        //ps.setInt(9, this.locatieID);
+        ps.setInt(9, this.ID);
+    }
+
+    @Override
+    public String toString() {
+
+        try {
+            return String.format("[%s] %s %s/%s", this.datum, this.naam, this.getInschrijvingen().size(), this.getMaxAantalInschrijvingen());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return String.format("[%s] %s %s/%s", this.datum, this.naam, "?", this.getMaxAantalInschrijvingen());
     }
 }
