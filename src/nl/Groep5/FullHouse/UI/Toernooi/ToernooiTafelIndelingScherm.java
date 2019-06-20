@@ -100,6 +100,7 @@ public class ToernooiTafelIndelingScherm extends JDialog {
     public static void show(Toernooi toernooi) {
         ToernooiTafelIndelingScherm dialog = new ToernooiTafelIndelingScherm(toernooi);
         dialog.setMinimumSize(new Dimension(400, 300));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 }

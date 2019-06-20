@@ -1,6 +1,5 @@
 package nl.Groep5.FullHouse.UI.Toernooi;
 
-import nl.Groep5.FullHouse.UI.MainScherm;
 import nl.Groep5.FullHouse.database.impl.InschrijvingToernooi;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
