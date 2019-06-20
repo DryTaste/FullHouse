@@ -539,4 +539,29 @@ public class DatabaseHelper {
         }
         return indelingList;
     }
+
+    public static List<Tafel> verkrijgTafelsByToernooiID(int ID) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps = mysql.prepareStatement("select * from Toernooi_tafels where toernooiID = ?");
+        ps.setInt(1, ID);
+
+        ResultSet rs = mysql.query(ps);
+
+        List<Tafel> indelingList = new ArrayList<>();
+
+        while (rs.next()) {
+            indelingList.add(new Tafel(rs));
+        }
+        return indelingList;
+    }
+
+    public static void creeerTafels(int Aantal, int ToernooiID) throws SQLException{
+        MySQLConnector mysql = Main.getMySQLConnection();
+        for(int i = 0;i < Aantal;i++) {
+            PreparedStatement ps = mysql.prepareStatement("INSERT INTO `Toernooi_tafels` (`toernooiID`) VALUES (?)");
+            ps.setInt(1, ToernooiID);
+
+            mysql.update(ps);
+        }
+    }
 }
