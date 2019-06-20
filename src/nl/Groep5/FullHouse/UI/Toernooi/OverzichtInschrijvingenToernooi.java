@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class OverzichtInschrijvingenToernooi extends JDialog {
-    private JPanel contentPane;
+    private JPanel contentPanes;
     private JButton buttonOK;
     private JList lSpelersNietBetaald;
     private JList lSpelersBetaald;
@@ -27,7 +27,7 @@ public class OverzichtInschrijvingenToernooi extends JDialog {
     private boolean isUpdating = false;
 
     public OverzichtInschrijvingenToernooi(Toernooi toernooi) throws SQLException {
-        setContentPane(contentPane);
+        setContentPane(contentPanes);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
@@ -45,7 +45,7 @@ public class OverzichtInschrijvingenToernooi extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(e -> onOK(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPanes.registerKeyboardAction(e -> onOK(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         inschrijvingenToernooi = toernooi.getInschrijvingen();
 
@@ -76,11 +76,11 @@ public class OverzichtInschrijvingenToernooi extends JDialog {
                 try {
                     if(!geselecteerdeInschrijving.getInschrijving().Update()){
                         this.cbBetaald.setSelected(!this.cbBetaald.isSelected());
-                        JOptionPane.showMessageDialog(contentPane, "Er is een fout opgetreden tijdens het updaten van inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(contentPanes, "Er is een fout opgetreden tijdens het updaten van inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(contentPane, "Er is een fout opgetreden tijdens het updaten van inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(contentPanes, "Er is een fout opgetreden tijdens het updaten van inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
                 }
                 repopulateListboxes();
             }
@@ -123,6 +123,7 @@ public class OverzichtInschrijvingenToernooi extends JDialog {
     public static void show(Toernooi toernooi) throws SQLException {
         OverzichtInschrijvingenToernooi dialog = new OverzichtInschrijvingenToernooi(toernooi);
         dialog.setMinimumSize(new Dimension(500, 400));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 }

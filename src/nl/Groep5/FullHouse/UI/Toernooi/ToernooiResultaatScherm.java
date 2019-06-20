@@ -34,6 +34,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setTitle("Fullhouse - Toernooi winnaars verwerken");
 
         buttonOK.addActionListener(e -> onOK(spelerListModel, toernooi));
 
@@ -186,6 +187,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         ToernooiResultaatScherm dialog = new ToernooiResultaatScherm(toernooi);
 //        dialog.pack();
         dialog.setMinimumSize(new Dimension(420, 270));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 
