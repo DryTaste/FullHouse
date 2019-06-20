@@ -17,7 +17,7 @@ public class InlogScherm implements ActionListener {
     private JButton btnLogin;
 
     public InlogScherm() {
-        frame = new JFrame("Login scherm");
+        frame = new JFrame("FullHouse login");
         frame.add(mainPanel);
         frame.setSize(410, 130);
         frame.setVisible(true);

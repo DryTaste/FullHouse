@@ -1,5 +1,6 @@
 package nl.Groep5.FullHouse.UI.Toernooi;
 
+import nl.Groep5.FullHouse.UI.MainScherm;
 import nl.Groep5.FullHouse.database.impl.InschrijvingToernooi;
 import nl.Groep5.FullHouse.database.impl.Speler;
 import nl.Groep5.FullHouse.database.impl.Toernooi;
@@ -34,6 +35,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setTitle("Fullhouse - Toernooi winnaars verwerken");
 
         buttonOK.addActionListener(e -> onOK(spelerListModel, toernooi));
 
@@ -186,6 +188,7 @@ public class ToernooiResultaatScherm extends JDialog implements ListSelectionLis
         ToernooiResultaatScherm dialog = new ToernooiResultaatScherm(toernooi);
 //        dialog.pack();
         dialog.setMinimumSize(new Dimension(420, 270));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 

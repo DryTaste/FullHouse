@@ -75,7 +75,7 @@ public class MainScherm {
     private JButton btnZoekenToernooi;
     private JButton btnToernooiUitvoeren;
     private JComboBox cbToernooiUitvoeren;
-    private JButton btnVerwerkWinnaars;
+    //private JButton btnVerwerkWinnaars;
     private JComboBox cbToernooiLocaties;
     private JScrollPane masterclassScroll;
     private JTable masterclassTabel;
@@ -652,6 +652,7 @@ public class MainScherm {
                     txtMasterClassEindTijd.setText(geselecteerdeMasterclass.getEindTijd());
                     txtMasterClassKosten.setText(String.valueOf(geselecteerdeMasterclass.getKosten()));
                     txtMasterClassMinRating.setText(String.valueOf(geselecteerdeMasterclass.getMinRating()));
+                    txtMasterClassMaxInschrijvingen.setText(String.valueOf(geselecteerdeMasterclass.getMaxAantalInschrijvingen()));
                     cbMasterClassLeraar.removeAllItems();
                     ArrayList<Integer> leraarIdIndex = new ArrayList<>();
                     for(BekendeSpeler element : bekendeSpelerLijst){
@@ -709,6 +710,12 @@ public class MainScherm {
                                 }
                                 try {
                                     geselecteerdeMasterclass.setMinRating(Double.valueOf(txtMasterClassMinRating.getText()));
+                                }catch(Exception error){
+                                    validated = false;
+                                    JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
+                                }
+                                try {
+                                    geselecteerdeMasterclass.setMaxAantalInschrijvingen(Integer.valueOf(txtMasterClassMaxInschrijvingen.getText()));
                                 }catch(Exception error){
                                     validated = false;
                                     JOptionPane.showMessageDialog(frame, error.getMessage(),"Fout", JOptionPane.ERROR_MESSAGE);
