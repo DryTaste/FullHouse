@@ -44,6 +44,7 @@ public class SpelerToernooiInschrijven extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setTitle("Speler inschrijven voor toernooi");
 
         buttonOK.addActionListener(e -> {
             onOK();
@@ -151,18 +152,18 @@ public class SpelerToernooiInschrijven extends JDialog {
 
             // Kijk of speler in toernooi zit
             if(toernooienWaarSpelerInZit.stream().map(Toernooi::getID).anyMatch(t -> t == toernooi.getID())){
-                JOptionPane.showMessageDialog(contentPane, "De speler zit al in deze toernooi !!!", "Doet al mee", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(contentPane, "Deze speler zit al in dit toernooi", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             // kijk of speler in een ander toernooi zit van de zelfde datum
             if(toernooienWaarSpelerInZit.stream().anyMatch(t -> t.getDatum().equals(toernooi.getDatum()))){
-                JOptionPane.showMessageDialog(contentPane, "De speler zit al in een ander toernooi dat op die dag plaats vind !!!", "Kan niet meer mee doen", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(contentPane, "Deze speler zit al in een ander toernooi dat op de zelfde dag plaats vind", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             DatabaseHelper.registreerSpelerVoorToernooi(toernooi, speler, cbBetaald.isSelected());
-            JOptionPane.showMessageDialog(contentPane, "Speler ingeschreven", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(contentPane, "Speler succesvol ingeschreven", "Bericht", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         }catch (SQLException ex){
             ex.printStackTrace();
@@ -177,12 +178,14 @@ public class SpelerToernooiInschrijven extends JDialog {
     public static void show(Toernooi toernooi) throws SQLException{
         SpelerToernooiInschrijven dialog = new SpelerToernooiInschrijven(DatabaseHelper.verkrijgAlleSpelers(), DatabaseHelper.verkrijgToernooien(), null, toernooi);
         dialog.setMinimumSize(new Dimension(500, 500));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 
     public static void show(Speler speler) throws SQLException{
         SpelerToernooiInschrijven dialog = new SpelerToernooiInschrijven(DatabaseHelper.verkrijgAlleSpelers(), DatabaseHelper.verkrijgToernooien(), speler, null);
         dialog.setMinimumSize(new Dimension(500, 500));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 }

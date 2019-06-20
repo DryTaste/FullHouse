@@ -31,7 +31,7 @@ public class OverzichtInschrijvingenMasterclass extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        setTitle("Masterclass: " + masterClass.getID());
+        setTitle("Overzicht inschrijvingen masterclass (" + masterClass.getID() + ")");
 
         buttonOK.addActionListener(e -> onOK());
 
@@ -123,6 +123,7 @@ public class OverzichtInschrijvingenMasterclass extends JDialog {
     public static void show(MasterClass masterClass) throws SQLException {
         OverzichtInschrijvingenMasterclass dialog = new OverzichtInschrijvingenMasterclass(masterClass);
         dialog.setMinimumSize(new Dimension(500, 400));
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 }
