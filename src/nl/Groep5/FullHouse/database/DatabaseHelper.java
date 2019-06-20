@@ -38,9 +38,9 @@ public class DatabaseHelper {
             ps = mysql.prepareStatement("select * from speler");
         } else {
             ps = mysql.prepareStatement("select * from speler where voornaam like ? or tussenvoegsel like ? or achternaam like ? or id = ?");
-            ps.setString(1, filter);
+            ps.setString(1, "%" + filter + "%");
             ps.setString(2, filter);
-            ps.setString(3, filter);
+            ps.setString(3, "%" + filter + "%");
             ps.setString(4, filter);
         }
         ResultSet rs = mysql.query(ps);
@@ -60,6 +60,27 @@ public class DatabaseHelper {
 
         ps = mysql.prepareStatement("select * from bekende_speler");
 
+        ResultSet rs = mysql.query(ps);
+
+        List<BekendeSpeler> bekendeSpelers = new ArrayList<>();
+
+        while (rs.next()) {
+            bekendeSpelers.add(new BekendeSpeler(rs));
+        }
+
+        return bekendeSpelers;
+    }
+
+    public static List<BekendeSpeler> verkrijgBekendeSpelers(String filter) throws SQLException {
+        MySQLConnector mysql = Main.getMySQLConnection();
+        PreparedStatement ps;
+        if (filter == null || filter.isEmpty()) {
+            ps = mysql.prepareStatement("select * from bekende_speler");
+        }else{
+            ps = mysql.prepareStatement("select * from bekende_speler where pseudonaam like ? or id = ?");
+            ps.setString(1, "%" + filter + "%");
+            ps.setString(2, filter);
+        }
         ResultSet rs = mysql.query(ps);
 
         List<BekendeSpeler> bekendeSpelers = new ArrayList<>();
@@ -134,7 +155,7 @@ public class DatabaseHelper {
             ps = mysql.prepareStatement("select * from masterclass");
         }else{
             ps = mysql.prepareStatement("select * from masterclass where datum like ? or beginTijd like ? or eindTijd like ? or kosten like ? or minRating like ? or maxInschrijvingen like ? or locatieID = ? or leraar like ? or ID = ?");
-            ps.setString(1, filter);
+            ps.setString(1, "%" + filter + "%");
             ps.setString(2, filter);
             ps.setString(3, filter);
             ps.setString(4, filter);
@@ -273,8 +294,8 @@ public class DatabaseHelper {
             ps = mysql.prepareStatement("select * from toernooi");
         } else {
             ps = mysql.prepareStatement("select * from toernooi where naam like ? or datum like ? or beginTijd like ? or eindTijd like ? or ID = ?");
-            ps.setString(1, filter);
-            ps.setString(2, filter);
+            ps.setString(1, "%" + filter + "%");
+            ps.setString(2, "%" + filter + "%");
             ps.setString(3, filter);
             ps.setString(4, filter);
             ps.setString(5, filter);
