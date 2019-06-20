@@ -569,7 +569,19 @@ public class MainScherm {
                                 OverzichtInschrijvingenToernooi.show(geselecteerdToernooi);
                                 break;
                             case "Overzicht tafelindeling":
-                                ToernooiTafelIndelingScherm.show(geselecteerdToernooi);
+                                if(DatabaseHelper.verkrijgLijstMetToernooiInschrijvingen(geselecteerdToernooi).size()%2 != 0){
+                                    JOptionPane.showMessageDialog(mainPanel, "Er moet een gelijk aantal spelers zijn ingeschreven om een overzicht te kunnen maken.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                                }else {
+                                    ToernooiTafelIndelingScherm.show(geselecteerdToernooi);
+                                }
+                                break;
+                            case "Reset tafelindeling":
+                                if(DatabaseHelper.verkrijgTafelsByToernooiID(geselecteerdToernooi.getID()).isEmpty()){
+                                    JOptionPane.showMessageDialog(mainPanel, "Tafelindeling moet eerst worden opgeslagen voordat deze gereset kan worden.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                                }else{
+                                    DatabaseHelper.verwijderStoelenEnTafels(geselecteerdToernooi.getID());
+                                    JOptionPane.showMessageDialog(frame, "Tafelindeling succesvol gereset.","Bericht", JOptionPane.INFORMATION_MESSAGE);
+                                }
                                 break;
                             case "Verwerk winnaars":
                                 try {
