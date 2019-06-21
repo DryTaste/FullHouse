@@ -97,7 +97,7 @@ public class ToernooiTafelIndelingScherm extends JDialog {
                 int spinnerValue = (Integer) tafelSpinner.getValue();
                 double spelerAantal = indelingList.size();
                 double printedValue = spelerAantal / spinnerValue;
-                if(printedValue%1 == 0){
+                if(printedValue%1 == 0 && printedValue < 11){
                     aantalSpelerPerTafel.setForeground(Color.black);
                 }else{
                     aantalSpelerPerTafel.setForeground(Color.red);
