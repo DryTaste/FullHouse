@@ -17,6 +17,7 @@ public class OverzichtInschrijvingenMasterclass extends JDialog {
     private JList lSpelersBetaald;
     private JCheckBox cbBetaald;
     private JLabel lblSpeler;
+    private JButton btnSpelerUitschrijven;
 
     private List<InschrijvingMasterclass> inschrijvingenMasterclass;
 
@@ -83,6 +84,26 @@ public class OverzichtInschrijvingenMasterclass extends JDialog {
                     JOptionPane.showMessageDialog(contentPane, "Er is een fout opgetreden tijdens het updaten van inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
                 }
                 repopulateListboxes();
+            }
+        });
+
+        this.btnSpelerUitschrijven.addActionListener(e -> {
+            if(geselecteerdeInschrijving != null){
+                try {
+                    if(geselecteerdeInschrijving.getInschrijving().Delete()) {
+                        inschrijvingenMasterclass.remove(geselecteerdeInschrijving.getInschrijving());
+                        geselecteerdeInschrijving = null;
+                        repopulateListboxes();
+                        JOptionPane.showMessageDialog(contentPane, "Speler succesvol uitgeschreven", "succes", JOptionPane.INFORMATION_MESSAGE);
+                    }else{
+                        throw new SQLException("Fout met uitschrijven, al verwijderd (placeholdertext)");
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(contentPane, "Er is een fout opgetreden tijdens het verwijderen van de inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
+                }
+            }else{
+                JOptionPane.showMessageDialog(contentPane, "Er is geen speler geselecteerd", "Fout", JOptionPane.ERROR_MESSAGE);
             }
         });
 

@@ -17,6 +17,7 @@ public class OverzichtInschrijvingenToernooi extends JDialog {
     private JList lSpelersBetaald;
     private JCheckBox cbBetaald;
     private JLabel lblSpeler;
+    private JButton btnSpelerUitschrijven;
 
     private List<InschrijvingToernooi> inschrijvingenToernooi;
 
@@ -83,9 +84,31 @@ public class OverzichtInschrijvingenToernooi extends JDialog {
                     JOptionPane.showMessageDialog(contentPanes, "Er is een fout opgetreden tijdens het updaten van inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
                 }
                 repopulateListboxes();
+            }else{
+                JOptionPane.showMessageDialog(contentPanes, "Er is geen speler geselecteerd", "Fout", JOptionPane.ERROR_MESSAGE);
+
             }
         });
 
+        this.btnSpelerUitschrijven.addActionListener(e -> {
+            if(geselecteerdeInschrijving != null){
+                try {
+                    if(geselecteerdeInschrijving.getInschrijving().Delete()) {
+                        inschrijvingenToernooi.remove(geselecteerdeInschrijving.getInschrijving());
+                        geselecteerdeInschrijving = null;
+                        repopulateListboxes();
+                        JOptionPane.showMessageDialog(contentPanes, "Speler succesvol uitgeschreven", "succes", JOptionPane.INFORMATION_MESSAGE);
+                    }else{
+                        throw new SQLException("Fout met uitschrijven, al verwijderd (placeholdertext)");
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(contentPanes, "Er is een fout opgetreden tijdens het verwijderen van de inschrijving", "Fout", JOptionPane.ERROR_MESSAGE);
+                }
+            }else{
+                JOptionPane.showMessageDialog(contentPanes, "Er is geen speler geselecteerd", "Fout", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     private void repopulateListboxes(){
