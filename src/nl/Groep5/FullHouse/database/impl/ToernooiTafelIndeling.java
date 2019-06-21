@@ -13,14 +13,15 @@ import java.sql.SQLException;
  */
 public class ToernooiTafelIndeling {
 
-    private int ID, toernooiID, spelerID, stoelNr;
+    private int ID, toernooiID, spelerID, stoelNr, tafelID;
 
     private Speler speler;
 
-    public ToernooiTafelIndeling(int toernooiID, int spelerID, int stoelNr) {
+    public ToernooiTafelIndeling(int toernooiID, int spelerID, int stoelNr, int tafelID) {
         this.toernooiID = toernooiID;
         this.spelerID = spelerID;
         this.stoelNr = stoelNr;
+        this.tafelID = tafelID;
     }
 
     public ToernooiTafelIndeling(ResultSet resultSet) throws SQLException {
@@ -28,6 +29,7 @@ public class ToernooiTafelIndeling {
         this.toernooiID = resultSet.getInt("toernooiID");
         this.spelerID = resultSet.getInt("spelerID");
         this.stoelNr = resultSet.getInt("stoelnr");
+        this.tafelID = resultSet.getInt("tafelID");
     }
 
     public int getID() {
@@ -54,13 +56,21 @@ public class ToernooiTafelIndeling {
         return stoelNr;
     }
 
+    public int getTafelID(){
+        return tafelID;
+    }
+
+    public void setTafelID(int tafelID){
+        this.tafelID = tafelID;
+    }
+
     public void setStoelNr(int stoelNr) {
         this.stoelNr = stoelNr;
     }
 
     public boolean Save() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `toernooi_tafelindeling` (`toernooiID`, `spelerID`, `stoelnr`) VALUES (?, ?, ?);");
+        PreparedStatement ps = mysql.prepareStatement("INSERT INTO `toernooi_tafelindeling` (`toernooiID`, `spelerID`, `stoelnr`, `tafelID`) VALUES (?, ?, ?, ?);");
         fillPrepareStatement(ps);
 
         // check if the update is 1 (1 row updated/added)
@@ -69,9 +79,9 @@ public class ToernooiTafelIndeling {
 
     public boolean Update() throws SQLException {
         MySQLConnector mysql = Main.getMySQLConnection();
-        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi_tafelindeling` SET `toernooiID`=?, `spelerID`=?, `stoelnr`=? WHERE `ID`=?;");
+        PreparedStatement ps = mysql.prepareStatement("UPDATE `toernooi_tafelindeling` SET `toernooiID`=?, `spelerID`=?, `stoelnr`=?, `tafelID`=? WHERE `ID`=?;");
         fillPrepareStatement(ps);
-        ps.setInt(4, this.ID);
+        ps.setInt(5, this.ID);
 
         // check if the update is 1 (1 row updated/added)
         return mysql.update(ps) == 1;
@@ -95,6 +105,7 @@ public class ToernooiTafelIndeling {
         ps.setInt(1, toernooiID);
         ps.setInt(2, spelerID);
         ps.setInt(3, stoelNr);
+        ps.setInt(4,tafelID);
     }
 
     public Speler getSpeler() throws SQLException {

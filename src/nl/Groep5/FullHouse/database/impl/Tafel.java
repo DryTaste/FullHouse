@@ -6,8 +6,6 @@ import java.sql.SQLException;
 public class Tafel {
     private int ID, toernooiID;
 
-    private Speler speler;
-
     public Tafel(int toernooiID) {
         this.toernooiID = toernooiID;
     }
