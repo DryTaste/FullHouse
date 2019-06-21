@@ -122,7 +122,7 @@ public class ToernooiTafelIndelingScherm extends JDialog {
 
         for (int i = 0; i < indelingList.size(); i++) {
             ToernooiTafelIndeling s = indelingList.get(i);
-            s.setStoelNr(i);
+            s.setStoelNr(i%aantalSpelersPerTafel+1);
 
             try {
                 listModel.addElement(String.format("Stoel %s: [%s]", i%aantalSpelersPerTafel+1, s.getSpeler().toString()));
